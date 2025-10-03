@@ -1,76 +1,149 @@
 
-
+import 'package:dreamjob/page/registration.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class LoginPage extends StatelessWidget{
+class LoginPage extends StatelessWidget {
+final TextEditingController email = TextEditingController();
+final TextEditingController password = TextEditingController();
 
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+body: Container(
+width: double.infinity,
+height: double.infinity,
+decoration: const BoxDecoration(
+gradient: LinearGradient(
+colors: [Color(0xFFFF9966), Color(0xFFFF5E62)], // orange-pink theme
+begin: Alignment.topLeft,
+end: Alignment.bottomRight,
+),
+),
+child: Center(
+child: SingleChildScrollView(
+child: Card(
+elevation: 12,
+shape: RoundedRectangleBorder(
+borderRadius: BorderRadius.circular(20),
+),
+margin: const EdgeInsets.symmetric(horizontal: 20),
+child: Padding(
+padding: const EdgeInsets.all(24.0),
+child: Column(
+mainAxisSize: MainAxisSize.min,
+children: [
+const Icon(Icons.login, size: 70, color: Colors.deepOrange),
+const SizedBox(height: 10),
 
-  final TextEditingController email = TextEditingController();
-  final TextEditingController password = TextEditingController();
+Text(
+"Welcome Back",
+style: GoogleFonts.lato(
+fontSize: 26,
+fontWeight: FontWeight.bold,
+color: Colors.black87,
+),
+),
+const SizedBox(height: 5),
+Text(
+"Login to continue",
+style: GoogleFonts.lato(
+fontSize: 14,
+color: Colors.grey[700],
+),
+),
+const SizedBox(height: 30),
 
-  @override
-  Widget build(BuildContext context) {
+// Email Field
+TextField(
+controller: email,
+decoration: InputDecoration(
+labelText: 'Email',
+prefixIcon: const Icon(Icons.email_outlined),
+border: OutlineInputBorder(
+borderRadius: BorderRadius.circular(12),
+),
+),
+),
+const SizedBox(height: 20),
 
-    return Scaffold(
-      body: Padding(
-          padding: EdgeInsets.all(16.00),
+// Password Field
+TextField(
+controller: password,
+obscureText: true,
+decoration: InputDecoration(
+labelText: 'Password',
+prefixIcon: const Icon(Icons.lock_outline),
+border: OutlineInputBorder(
+borderRadius: BorderRadius.circular(12),
+),
+),
+),
 
+const SizedBox(height: 20),
 
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: email,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email)),
-            ),
+// Login Button
+SizedBox(
+width: double.infinity,
+height: 50,
+child: ElevatedButton(
+onPressed: () {
+String em = email.text;
+String pass = password.text;
+print('Email: $em, Password: $pass');
+},
+style: ElevatedButton.styleFrom(
+backgroundColor: Colors.deepOrange,
+foregroundColor: Colors.white,
+shape: RoundedRectangleBorder(
+borderRadius: BorderRadius.circular(12),
+),
+elevation: 5,
+),
+child: const Text(
+"Login",
+style: TextStyle(
+fontSize: 18,
+fontWeight: FontWeight.w600,
+),
+),
+),
+),
 
-            SizedBox(
-              height: 20.0,
-            ),
+const SizedBox(height: 20),
 
-            TextField(
-              controller: password,
-              decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.password)),
-              obscureText: true,
-            ),
-
-            SizedBox(
-              height: 20.0,
-            ),
-
-            ElevatedButton(
-                onPressed: (){
-              String em = email.text;
-              String pass = password.text;
-              print('Email: $em, Password: $pass');
-            },
-                child: Text(
-                  "Login",
-                  style: TextStyle(
-                    fontSize: 20.00,
-                    fontWeight: FontWeight.w800,
-
-                  ),
-
-                ),
-                
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  foregroundColor: Colors.white
-                )
-            ),
-
-
-          ],
-        ),
-      )
-    );
-  }
-
+// Registration Redirect
+Row(
+mainAxisAlignment: MainAxisAlignment.center,
+children: [
+const Text("Don’t have an account? "),
+GestureDetector(
+onTap: () {
+Navigator.push(
+context,
+MaterialPageRoute(
+builder: (context) => const Registration()),
+);
+},
+child: const Text(
+"Register",
+style: TextStyle(
+color: Colors.deepOrange,
+fontWeight: FontWeight.bold,
+decoration: TextDecoration.underline,
+),
+),
+),
+],
+),
+],
+),
+),
+),
+),
+),
+),
+);
 }
+}
+

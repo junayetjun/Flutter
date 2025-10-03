@@ -1,4 +1,5 @@
 import 'package:dreamjob/page/loginpage.dart';
+import 'package:dreamjob/page/registration.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage()
+      home: Registration()
     );
   }
 
