@@ -1,11 +1,11 @@
-import 'dart:nativewrappers/_internal/vm/lib/typed_data_patch.dart';
-
+import 'dart:io';
 import 'package:date_field/date_field.dart';
 import 'package:dreamjob/page/loginpage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:radio_group_v2/radio_group_v2.dart' as v2;
 import 'package:radio_group_v2/radio_group_v2.dart';
 
@@ -178,23 +178,37 @@ class _RegistrationState extends State<Registration> {
 
                       const SizedBox(height: 25),
 
+                      TextButton.icon(
+                          icon: Icon(Icons.image),
+                          label: Text('Upload Image'),
+                          onPressed: pickImage
+                      ),
+                      // Display selected image preview
+                      if(kIsWeb && webImage != null)
+                        Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.memory(
+                              webImage!,
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
+                        )
+                      else if(
+                      !kIsWeb && selectedImage != null)
+                        Padding(
+                            padding: const EdgeInsets.all(8.0),
+                        child: Image.file(
+                          File(selectedImage!.path),
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.cover,
+                        ),
+                        ),
+                      
+                      
 
-                      // TextButton.icon(
-                      //     icon: Icon(Icons.image),
-                      //     label: Text('Upload Image'),
-                      //     onPressed: pickImage,
-                      // ),
-                      // // Display selected image preview
-                      // if(kIsWeb && webImage != null)
-                      //   Padding(
-                      //       padding: const EdgeInsets.all(8.0),
-                      //       child: Image,
-                      //   )
-                      
-                      
-                      
-
-                      // const SizedBox(height: 25),
+                      const SizedBox(height: 25),
                       // Register Button
                       SizedBox(
                         width: double.infinity,
@@ -281,4 +295,29 @@ class _RegistrationState extends State<Registration> {
       ),
     );
   }
+
+  Future<void> pickImage() async {
+    if(kIsWeb){
+      // For Web: Use image_picker_web to pick image and store as bytes
+      var pickedImage = await ImagePickerWeb.getImageAsBytes();
+      if(pickedImage != null){
+        setState(() {
+          webImage = pickedImage;
+        });
+      }
+    }
+      else{
+        // For Mobile: Use image_picker to pick image
+        final XFile? pickedImage =
+            await _picker.pickImage(source: ImageSource.gallery);
+        if(pickedImage != null){
+          setState(() {
+            selectedImage = pickedImage;
+          });
+        }
+      }
+    }
+
+
+
 }
