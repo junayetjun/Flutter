@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:date_field/date_field.dart';
 import 'package:dreamjob/page/loginpage.dart';
+import 'package:dreamjob/service/authservice.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +18,9 @@ class Registration extends StatefulWidget {
 }
 
 class _RegistrationState extends State<Registration> {
+
+  bool _obscurePassword = true;
+
   final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
@@ -186,27 +190,27 @@ class _RegistrationState extends State<Registration> {
                       // Display selected image preview
                       if(kIsWeb && webImage != null)
                         Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.memory(
+                            webImage!,
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      else
+                        if(
+                        !kIsWeb && selectedImage != null)
+                          Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Image.memory(
-                              webImage!,
+                            child: Image.file(
+                              File(selectedImage!.path),
                               height: 100,
                               width: 100,
                               fit: BoxFit.cover,
                             ),
-                        )
-                      else if(
-                      !kIsWeb && selectedImage != null)
-                        Padding(
-                            padding: const EdgeInsets.all(8.0),
-                        child: Image.file(
-                          File(selectedImage!.path),
-                          height: 100,
-                          width: 100,
-                          fit: BoxFit.cover,
-                        ),
-                        ),
-                      
-                      
+                          ),
+
 
                       const SizedBox(height: 25),
                       // Register Button
@@ -215,12 +219,7 @@ class _RegistrationState extends State<Registration> {
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              // Perform registration
-                              print(
-                                "Registered with: ${name.text}, ${email.text}",
-                              );
-                            }
+                            register();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepPurple,
@@ -279,12 +278,11 @@ class _RegistrationState extends State<Registration> {
   }
 
   // Custom reusable text field builder
-  Widget _buildTextField(
-    TextEditingController controller,
-    String label,
-    IconData icon, {
-    bool isPassword = false,
-  }) {
+  Widget _buildTextField(TextEditingController controller,
+      String label,
+      IconData icon, {
+        bool isPassword = false,
+      }) {
     return TextField(
       controller: controller,
       obscureText: isPassword,
@@ -297,27 +295,125 @@ class _RegistrationState extends State<Registration> {
   }
 
   Future<void> pickImage() async {
-    if(kIsWeb){
+    if (kIsWeb) {
       // For Web: Use image_picker_web to pick image and store as bytes
       var pickedImage = await ImagePickerWeb.getImageAsBytes();
-      if(pickedImage != null){
+      if (pickedImage != null) {
         setState(() {
           webImage = pickedImage;
         });
       }
     }
-      else{
-        // For Mobile: Use image_picker to pick image
-        final XFile? pickedImage =
-            await _picker.pickImage(source: ImageSource.gallery);
-        if(pickedImage != null){
-          setState(() {
-            selectedImage = pickedImage;
-          });
-        }
+    else {
+      // For Mobile: Use image_picker to pick image
+      final XFile? pickedImage =
+      await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedImage != null) {
+        setState(() {
+          selectedImage = pickedImage;
+        });
+      }
+    }
+  }
+
+
+  /// Method to handle Caregiver registration
+
+  void register() async {
+    // ✅ Check if the form (text fields) is valid
+    if (_formKey.currentState!.validate()) {
+      // ✅ Check if password and confirm password match
+      if (password.text != confirmPassword.text) {
+        // Show an error message if passwords don’t match
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Password do not match')),
+        );
+        return; // stop further execution
       }
     }
 
+    // ✅ Validate that the user has selected an image
+    if (kIsWeb) {
+      // On Web → check if webImage (Uint8List) is selected
+      if (webImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please select an image')),
+        );
+        return; // stop further execution
+      }
+    }
+    else {
+      // On Mobile/Desktop → check if image file is selected
+      if (selectedImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please select an image')),
+        );
+        return; // stop further execution
+      }
+    }
 
+    // ✅ Prepare User object (basic login info)
+    final user = {
+      "name": name.text,
+      "email": email.text,
+      "phone": cell.text,
+      "password": password.text,
+    };
 
+    // ✅ Prepare JobSeeker object (extra personal info)
+    final caregiver = {
+      "name": name.text,
+      "email": email.text,
+      "phone": cell.text,
+      "gender": selectedGender ?? "other",
+      // fallback if null
+      "address": address.text,
+      "dateOfBirth": selectedDOB?.toIso8601String() ?? '',
+      // convert DateTime to ISO string
+    };
+
+    // ✅ Initialize your API Service
+    final apiService = AuthService();
+
+    // ✅ Track API call success or failure
+    bool success = false;
+
+    // ✅ Send registration request (different handling for Web vs Mobile)
+    if (kIsWeb && webImage != null) {
+      // For Web → send photo as bytes
+      success = await apiService.registerCaregiverWeb(
+        user: user,
+        caregiver: caregiver,
+        photoBytes: webImage!, // safe to use ! because already checked above
+      );
+    } else if (selectedImage != null) {
+      // For Mobile → send photo as file
+      success = await apiService.registerCaregiverWeb(
+        user: user,
+        caregiver: caregiver,
+        photoFile: File(selectedImage!
+            .path), // safe to use ! because already checked above
+      );
+    }
+
+    // ✅ Handle the API response
+    if (success) {
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration Successful')),
+      );
+
+      // Redirect user to Login Page after successful registration
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } else {
+      // Show error message if regi
+
+    }
+  }
 }
+
+
+

@@ -1,7 +1,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:nativewrappers/_internal/vm/lib/typed_data_patch.dart';
+import 'dart:typed_data';
+
 
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
@@ -43,12 +44,12 @@ class AuthService{
     }
   }
 
-  /// Registers a Job Seeker (for Web & Mobile) by sending
-  /// user data, jobSeeker data, and optional photo (file or bytes)
+  /// Registers a Caregiver (for Web & Mobile) by sending
+  /// user data, caregiver data, and optional photo (file or bytes)
 
   Future<bool> registerCaregiverWeb({
     required Map<String, dynamic> user, // User data (username, email, password, etc.)
-    required Map<String, dynamic> caregiver, // JobSeeker-specific data (skills, CV, etc.)
+    required Map<String, dynamic> caregiver, // Caregiver-specific data (skills, CV, etc.)
     File? photoFile, // Photo file (used on mobile/desktop platforms)
     Uint8List? photoBytes, // Photo bytes (used on web platforms)
 
@@ -56,7 +57,7 @@ class AuthService{
     // Create a multipart HTTP request (POST) to your backend API
     var request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl/api/caregiver'), // Backend endpoint
+        Uri.parse('$baseUrl/api/caregiver/'), // Backend endpoint
     );
 
     // Convert User map into JSON string and add to request fields
@@ -71,12 +72,20 @@ class AuthService{
 
     // If photoBytes is available (e.g., from web image picker)
 
-    if(photoBytes != null){
+    if (photoBytes != null) {
       request.files.add(http.MultipartFile.fromBytes(
-          'photo', // backend expects field name 'photo'
-          photoBytes, // Uint8List is valid here
-      filename: 'profile.png'
-      )); // arbitrary filename for backend
+          'photo',                // backend expects field name 'photo'
+          photoBytes,             // Uint8List is valid here
+          filename: 'profile.png' // arbitrary filename for backend
+      ));
+    }
+
+    // If photoFile is provided (mobile/desktop), attach it
+    else if (photoFile != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'photo',                // backend expects field name 'photo'
+        photoFile.path,         // file path from File object
+      ));
     }
 
     // ---------------------- SEND REQUEST ----------------------
