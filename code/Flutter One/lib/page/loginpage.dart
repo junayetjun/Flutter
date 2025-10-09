@@ -1,3 +1,4 @@
+import 'package:dreamjob/caregiver/caregiver_profile.dart';
 import 'package:dreamjob/page/adminpage.dart';
 import 'package:dreamjob/page/registration.dart';
 import 'package:dreamjob/service/authservice.dart';
@@ -165,7 +166,7 @@ class LoginPage extends StatelessWidget {
       if(role == 'CAREGIVER'){
         Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => AdminPage()),
+            MaterialPageRoute(builder: (context) => CaregiverProfile()),
 
         );
       }
