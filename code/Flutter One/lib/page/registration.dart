@@ -1,24 +1,23 @@
 import 'dart:io';
 import 'package:date_field/date_field.dart';
+import 'package:dreamjob/entity/category.dart';
 import 'package:dreamjob/page/loginpage.dart';
 import 'package:dreamjob/service/authservice.dart';
-import 'package:flutter/foundation.dart';
+import 'package:dreamjob/service/category_service.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_web/image_picker_web.dart';
 import 'package:radio_group_v2/radio_group_v2.dart' as v2;
-import 'package:radio_group_v2/radio_group_v2.dart';
 
 class Registration extends StatefulWidget {
   const Registration({super.key});
-
   @override
   State<Registration> createState() => _RegistrationState();
 }
 
 class _RegistrationState extends State<Registration> {
-
   bool _obscurePassword = true;
 
   final TextEditingController name = TextEditingController();
@@ -28,19 +27,43 @@ class _RegistrationState extends State<Registration> {
   final TextEditingController cell = TextEditingController();
   final TextEditingController address = TextEditingController();
 
-  final RadioGroupController genderController = RadioGroupController();
+  final v2.RadioGroupController genderController = v2.RadioGroupController();
   final DateTimeFieldPickerPlatform dob = DateTimeFieldPickerPlatform.material;
 
   String? selectedGender;
-
   DateTime? selectedDOB;
 
   XFile? selectedImage;
-
   Uint8List? webImage;
   final ImagePicker _picker = ImagePicker();
 
   final _formKey = GlobalKey<FormState>();
+
+  // Category dropdown variables
+  Category? selectedCategory;
+  List<Category> categories = [];
+  bool isCategoryLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadCategories();
+  }
+
+  Future<void> loadCategories() async {
+    try {
+      final fetched = await CategoryService().fetchCategories();
+      setState(() {
+        categories = fetched;
+        isCategoryLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+      setState(() {
+        isCategoryLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +192,7 @@ class _RegistrationState extends State<Registration> {
                               controller: genderController,
                               values: const ["Male", "Female", "Other"],
                               indexOfDefault: 0,
-                              orientation: RadioGroupOrientation.horizontal,
+                              orientation: v2.RadioGroupOrientation.horizontal,
                               onChanged: (newValue) {
                                 setState(() {
                                   selectedGender = newValue.toString();
@@ -180,15 +203,48 @@ class _RegistrationState extends State<Registration> {
                         ),
                       ),
 
-                      const SizedBox(height: 25),
+                      const SizedBox(height: 20),
 
-                      TextButton.icon(
-                          icon: Icon(Icons.image),
-                          label: Text('Upload Image'),
-                          onPressed: pickImage
+                      // Category Dropdown
+                      isCategoryLoading
+                          ? const CircularProgressIndicator()
+                          : DropdownButtonFormField<Category>(
+                        decoration: InputDecoration(
+                          labelText: "Select Category",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        value: selectedCategory,
+                        items: categories.map((Category category) {
+                          return DropdownMenuItem<Category>(
+                            value: category,
+                            child: Text(category.name ?? ''),
+                          );
+                        }).toList(),
+                        onChanged: (Category? value) {
+                          setState(() {
+                            selectedCategory = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return "Please select a category";
+                          }
+                          return null;
+                        },
                       ),
+                      const SizedBox(height: 20),
+
+                      // Upload Image Button
+                      TextButton.icon(
+                        icon: const Icon(Icons.image),
+                        label: const Text('Upload Image'),
+                        onPressed: pickImage,
+                      ),
+
                       // Display selected image preview
-                      if(kIsWeb && webImage != null)
+                      if (kIsWeb && webImage != null)
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Image.memory(
@@ -198,29 +254,25 @@ class _RegistrationState extends State<Registration> {
                             fit: BoxFit.cover,
                           ),
                         )
-                      else
-                        if(
-                        !kIsWeb && selectedImage != null)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.file(
-                              File(selectedImage!.path),
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.cover,
-                            ),
+                      else if (!kIsWeb && selectedImage != null)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.file(
+                            File(selectedImage!.path),
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.cover,
                           ),
-
+                        ),
 
                       const SizedBox(height: 25),
+
                       // Register Button
                       SizedBox(
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: () {
-                            register();
-                          },
+                          onPressed: register,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepPurple,
                             foregroundColor: Colors.white,
@@ -248,7 +300,7 @@ class _RegistrationState extends State<Registration> {
                           const Text("Already have an account? "),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => LoginPage(),
@@ -277,15 +329,18 @@ class _RegistrationState extends State<Registration> {
     );
   }
 
-  // Custom reusable text field builder
-  Widget _buildTextField(TextEditingController controller,
-      String label,
-      IconData icon, {
-        bool isPassword = false,
-      }) {
-    return TextField(
+  Widget _buildTextField(
+      TextEditingController controller, String label, IconData icon,
+      {bool isPassword = false}) {
+    return TextFormField(
       controller: controller,
       obscureText: isPassword,
+      validator: (val) {
+        if (val == null || val.isEmpty) {
+          return '$label is required';
+        }
+        return null;
+      },
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),
@@ -296,16 +351,13 @@ class _RegistrationState extends State<Registration> {
 
   Future<void> pickImage() async {
     if (kIsWeb) {
-      // For Web: Use image_picker_web to pick image and store as bytes
       var pickedImage = await ImagePickerWeb.getImageAsBytes();
       if (pickedImage != null) {
         setState(() {
           webImage = pickedImage;
         });
       }
-    }
-    else {
-      // For Mobile: Use image_picker to pick image
+    } else {
       final XFile? pickedImage =
       await _picker.pickImage(source: ImageSource.gallery);
       if (pickedImage != null) {
@@ -316,43 +368,45 @@ class _RegistrationState extends State<Registration> {
     }
   }
 
-
-  /// Method to handle Caregiver registration
-
   void register() async {
-    // ✅ Check if the form (text fields) is valid
-    if (_formKey.currentState!.validate()) {
-      // ✅ Check if password and confirm password match
-      if (password.text != confirmPassword.text) {
-        // Show an error message if passwords don’t match
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password do not match')),
-        );
-        return; // stop further execution
-      }
+    if (!_formKey.currentState!.validate()) {
+      return;
     }
 
-    // ✅ Validate that the user has selected an image
+    // Password match check
+    if (password.text != confirmPassword.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+    // Image validation
     if (kIsWeb) {
-      // On Web → check if webImage (Uint8List) is selected
       if (webImage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select an image')),
+          const SnackBar(content: Text('Please select an image')),
         );
-        return; // stop further execution
+        return;
       }
-    }
-    else {
-      // On Mobile/Desktop → check if image file is selected
+    } else {
       if (selectedImage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select an image')),
+          const SnackBar(content: Text('Please select an image')),
         );
-        return; // stop further execution
+        return;
       }
     }
 
-    // ✅ Prepare User object (basic login info)
+    // Category validation
+    if (selectedCategory == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a category')),
+      );
+      return;
+    }
+
+    // Prepare data
     final user = {
       "name": name.text,
       "email": email.text,
@@ -360,60 +414,47 @@ class _RegistrationState extends State<Registration> {
       "password": password.text,
     };
 
-    // ✅ Prepare JobSeeker object (extra personal info)
     final caregiver = {
       "name": name.text,
       "email": email.text,
       "phone": cell.text,
       "gender": selectedGender ?? "other",
-      // fallback if null
       "address": address.text,
       "dateOfBirth": selectedDOB?.toIso8601String() ?? '',
-      // convert DateTime to ISO string
+      "category": {
+        "id": selectedCategory!.id
+      }
     };
 
-    // ✅ Initialize your API Service
     final apiService = AuthService();
-
-    // ✅ Track API call success or failure
     bool success = false;
 
-    // ✅ Send registration request (different handling for Web vs Mobile)
     if (kIsWeb && webImage != null) {
-      // For Web → send photo as bytes
       success = await apiService.registerCaregiverWeb(
         user: user,
         caregiver: caregiver,
-        photoBytes: webImage!, // safe to use ! because already checked above
+        photoBytes: webImage!,
       );
     } else if (selectedImage != null) {
-      // For Mobile → send photo as file
       success = await apiService.registerCaregiverWeb(
         user: user,
         caregiver: caregiver,
-        photoFile: File(selectedImage!
-            .path), // safe to use ! because already checked above
+        photoFile: File(selectedImage!.path),
       );
     }
 
-    // ✅ Handle the API response
     if (success) {
-      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration Successful')),
+        const SnackBar(content: Text('Registration Successful')),
       );
-
-      // Redirect user to Login Page after successful registration
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) =>  LoginPage()),
       );
     } else {
-      // Show error message if regi
-
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration Failed')),
+      );
     }
   }
 }
-
-
-

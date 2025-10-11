@@ -2,6 +2,7 @@ import 'package:dreamjob/caregiver/caregiver_profile.dart';
 import 'package:dreamjob/page/adminpage.dart';
 import 'package:dreamjob/page/registration.dart';
 import 'package:dreamjob/service/authservice.dart';
+import 'package:dreamjob/service/caregiver_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,7 @@ class LoginPage extends StatelessWidget {
 
   final storage = new FlutterSecureStorage();
   AuthService authService = AuthService();
+  CaregiverService caregiverService= CaregiverService();
 
 
   @override
@@ -163,12 +165,26 @@ class LoginPage extends StatelessWidget {
       //Successful login, role-based navigation
       final role = await authService.getUserRole(); //Get role from AuthService
 
-      if(role == 'CAREGIVER'){
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => CaregiverProfile()),
 
+      if (role == 'ADMIN') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AdminPage()),
         );
+      }
+
+      else if(role == 'CAREGIVER'){
+
+        final profile = await caregiverService.getCaregiverProfile();
+
+        if(profile != null){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CaregiverProfile(profile: profile),
+            ),
+          );
+        }
       }
       else {
         print('Unknwon role $role');
