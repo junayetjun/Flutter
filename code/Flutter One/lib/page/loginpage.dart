@@ -10,22 +10,37 @@ import 'package:google_fonts/google_fonts.dart';
 class LoginPage extends StatelessWidget {
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
-  // bool _obscurePassword = true;
 
-  final storage = new FlutterSecureStorage();
-  AuthService authService = AuthService();
-  CaregiverService caregiverService= CaregiverService();
+  final storage = FlutterSecureStorage();
+  final AuthService authService = AuthService();
+  final CaregiverService caregiverService = CaregiverService();
 
+  LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xfff06292),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Back to previous page
+          },
+        ),
+        title: Text(
+          "Login",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        elevation: 5,
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFFF9966), Color(0xFFFF5E62)], // orange-pink theme
+            colors: [Color(0xfffff0f5), Color(0xffffc1e3)], // Soft baby-pink gradient
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -43,12 +58,12 @@ class LoginPage extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.login, size: 70, color: Colors.deepOrange),
-                    const SizedBox(height: 10),
+                    const Icon(Icons.child_care, size: 70, color: Color(0xfff06292)),
+                    const SizedBox(height: 15),
 
                     Text(
                       "Welcome Back",
-                      style: GoogleFonts.lato(
+                      style: GoogleFonts.poppins(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -57,7 +72,7 @@ class LoginPage extends StatelessWidget {
                     const SizedBox(height: 5),
                     Text(
                       "Login to continue",
-                      style: GoogleFonts.lato(
+                      style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: Colors.grey[700],
                       ),
@@ -73,6 +88,8 @@ class LoginPage extends StatelessWidget {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        filled: true,
+                        fillColor: Colors.grey[100],
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -87,21 +104,22 @@ class LoginPage extends StatelessWidget {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        filled: true,
+                        fillColor: Colors.grey[100],
                       ),
                     ),
-
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
 
                     // Login Button
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: (){
+                        onPressed: () {
                           loginUser(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
+                          backgroundColor: const Color(0xfff06292),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -117,7 +135,6 @@ class LoginPage extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 20),
 
                     // Registration Redirect
@@ -137,7 +154,7 @@ class LoginPage extends StatelessWidget {
                           child: const Text(
                             "Register",
                             style: TextStyle(
-                              color: Colors.deepOrange,
+                              color: Color(0xfff06292),
                               fontWeight: FontWeight.bold,
                               decoration: TextDecoration.underline,
                             ),
@@ -155,29 +172,22 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-
-
-  Future<void> loginUser(BuildContext context) async{
-
-    try{
-
+  // Login function with role-based navigation
+  Future<void> loginUser(BuildContext context) async {
+    try {
       final response = await authService.login(email.text, password.text);
-      //Successful login, role-based navigation
-      final role = await authService.getUserRole(); //Get role from AuthService
+      final role = await authService.getUserRole();
 
+      if (!context.mounted) return;
 
       if (role == 'ADMIN') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => AdminPage()),
         );
-      }
-
-      else if(role == 'CAREGIVER'){
-
+      } else if (role == 'CAREGIVER') {
         final profile = await caregiverService.getCaregiverProfile();
-
-        if(profile != null){
+        if (profile != null) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -185,18 +195,11 @@ class LoginPage extends StatelessWidget {
             ),
           );
         }
+      } else {
+        print('Unknown role: $role');
       }
-      else {
-        print('Unknwon role $role');
-      }
-
-
-    }
-    catch(error){
+    } catch (error) {
       print('Login failed: $error');
     }
-
-
   }
-
 }
