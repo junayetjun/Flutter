@@ -1,4 +1,4 @@
-class education {
+class Education {
   int? id;
   String? level;
   String? institute;
@@ -6,7 +6,7 @@ class education {
   String? result;
   String? year;
 
-  education(
+  Education(
       {this.id,
         this.level,
         this.institute,
@@ -14,7 +14,7 @@ class education {
         this.result,
         this.year});
 
-  education.fromJson(Map<String, dynamic> json) {
+  Education.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     level = json['level'];
     institute = json['institute'];

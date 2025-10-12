@@ -1,8 +1,10 @@
 import 'package:dreamjob/caregiver/caregiver_profile.dart';
 import 'package:dreamjob/page/adminpage.dart';
 import 'package:dreamjob/page/registration.dart';
+import 'package:dreamjob/parent/parent_profile.dart';
 import 'package:dreamjob/service/authservice.dart';
 import 'package:dreamjob/service/caregiver_service.dart';
+import 'package:dreamjob/service/parent_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,6 +16,7 @@ class LoginPage extends StatelessWidget {
   final storage = FlutterSecureStorage();
   final AuthService authService = AuthService();
   final CaregiverService caregiverService = CaregiverService();
+  final ParentService parentService = ParentService();
 
   LoginPage({super.key});
 
@@ -195,7 +198,18 @@ class LoginPage extends StatelessWidget {
             ),
           );
         }
-      } else {
+      }
+      else if (role == 'PARENT') {
+        final profile = await parentService.getParentProfile();
+        if (profile != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ParentProfile(profile: profile),
+            ),
+          );
+        }
+      }else {
         print('Unknown role: $role');
       }
     } catch (error) {

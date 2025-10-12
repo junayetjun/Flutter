@@ -71,7 +71,7 @@ class _RegistrationState extends State<Registration> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("Registration"),
+        title: const Text("Registration As Caregiver"),
         centerTitle: true,
       ),
       body: Container(
@@ -116,11 +116,8 @@ class _RegistrationState extends State<Registration> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
-                                Icons.app_registration,
-                                size: 70,
-                                color: Color(0xFF1E3C72),
-                              ),
+                              const Icon(Icons.app_registration,
+                                  size: 70, color: Color(0xFF1E3C72)),
                               const SizedBox(height: 10),
                               Text(
                                 "Create Your Account",
@@ -144,13 +141,17 @@ class _RegistrationState extends State<Registration> {
                               const SizedBox(height: 15),
                               _buildTextField(email, "Email", Icons.email),
                               const SizedBox(height: 15),
-                              _buildTextField(password, "Password", Icons.lock, isPassword: true),
+                              _buildTextField(password, "Password", Icons.lock,
+                                  isPassword: true),
                               const SizedBox(height: 15),
-                              _buildTextField(confirmPassword, "Confirm Password", Icons.lock, isPassword: true),
+                              _buildTextField(confirmPassword, "Confirm Password",
+                                  Icons.lock,
+                                  isPassword: true),
                               const SizedBox(height: 15),
                               _buildTextField(cell, "Cell Number", Icons.phone),
                               const SizedBox(height: 15),
-                              _buildTextField(address, "Address", Icons.maps_home_work_rounded),
+                              _buildTextField(
+                                  address, "Address", Icons.maps_home_work_rounded),
                               const SizedBox(height: 15),
 
                               DateTimeFormField(
@@ -160,9 +161,11 @@ class _RegistrationState extends State<Registration> {
                                   fillColor: Colors.white,
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(color: Color(0xFF1E3C72)),
+                                    borderSide:
+                                    const BorderSide(color: Color(0xFF1E3C72)),
                                   ),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12)),
                                   prefixIcon: const Icon(Icons.calendar_today),
                                 ),
                                 mode: DateTimeFieldPickerMode.date,
@@ -192,7 +195,8 @@ class _RegistrationState extends State<Registration> {
                                       controller: genderController,
                                       values: const ["Male", "Female", "Other"],
                                       indexOfDefault: 0,
-                                      orientation: v2.RadioGroupOrientation.horizontal,
+                                      orientation:
+                                      v2.RadioGroupOrientation.horizontal,
                                       onChanged: (newValue) {
                                         setState(() {
                                           selectedGender = newValue.toString();
@@ -213,7 +217,8 @@ class _RegistrationState extends State<Registration> {
                                   fillColor: Colors.white,
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(color: Color(0xFF1E3C72)),
+                                    borderSide: const BorderSide(
+                                        color: Color(0xFF1E3C72)),
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -376,36 +381,71 @@ class _RegistrationState extends State<Registration> {
   }
 
   void register() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_formKey.currentState!.validate()) {
+      if (password.text != confirmPassword.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Passwords do not match!')),
+        );
+        return;
+      }
 
-    if (password.text != confirmPassword.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
-      return;
+      if ((kIsWeb && webImage == null) || (!kIsWeb && selectedImage == null)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please select an image.')),
+        );
+        return;
+      }
+
+      final user = {
+        "name": name.text,
+        "email": email.text,
+        "phone": cell.text,
+        "password": password.text,
+      };
+
+      final careGiver = {
+        "name": name.text,
+        "email": email.text,
+        "phone": cell.text,
+        "gender": selectedGender ?? "Other",
+        "address": address.text,
+        "dateOfBirth": selectedDOB?.toIso8601String() ?? "",
+        "category": {
+          "id": selectedCategory?.id ?? 0  // 🟢 Change is here
+        },
+      };
+
+
+      final apiService = AuthService();
+      bool success = false;
+
+      if (kIsWeb && webImage != null) {
+        success = await apiService.registerCaregiverWeb(
+          user: user,
+          caregiver: careGiver,
+          photoBytes: webImage!,
+        );
+      } else if (selectedImage != null) {
+        success = await apiService.registerCaregiverWeb(
+          user: user,
+          caregiver: careGiver,
+          photoFile: File(selectedImage!.path),
+        );
+      }
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration Successful')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration Failed')),
+        );
+      }
     }
-
-    if ((kIsWeb && webImage == null) || (!kIsWeb && selectedImage == null)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an image')),
-      );
-      return;
-    }
-
-    if (selectedCategory == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a category')),
-      );
-      return;
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Registration Successful')),
-    );
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
-    );
   }
 }

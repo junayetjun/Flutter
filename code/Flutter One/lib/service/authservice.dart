@@ -64,8 +64,64 @@ class AuthService{
     request.fields['user'] = jsonEncode(user);
 
 
-    // Convert JobSeeker map into JSON string and add to request fields
+    // Convert Caregiver map into JSON string and add to request fields
     request.fields['caregiver'] = jsonEncode(caregiver);
+
+
+    // ---------------------- IMAGE HANDLING ----------------------
+
+    // If photoBytes is available (e.g., from web image picker)
+
+    if (photoBytes != null) {
+      request.files.add(http.MultipartFile.fromBytes(
+          'photo',                // backend expects field name 'photo'
+          photoBytes,             // Uint8List is valid here
+          filename: 'profile.png' // arbitrary filename for backend
+      ));
+    }
+
+    // If photoFile is provided (mobile/desktop), attach it
+    else if (photoFile != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'photo',                // backend expects field name 'photo'
+        photoFile.path,         // file path from File object
+      ));
+    }
+
+    // ---------------------- SEND REQUEST ----------------------
+
+    // Send the request to backend
+    var response = await request.send();
+
+    // Return true if response code is 200 (success)
+    return response.statusCode == 200;
+
+  }
+
+
+
+  /// Registers a Parent (for Web & Mobile) by sending
+  /// user data, parent data, and optional photo (file or bytes)
+
+  Future<bool> registerParentWeb({
+    required Map<String, dynamic> user, // User data (username, email, password, etc.)
+    required Map<String, dynamic> parent, // Caregiver-specific data (skills, CV, etc.)
+    File? photoFile, // Photo file (used on mobile/desktop platforms)
+    Uint8List? photoBytes, // Photo bytes (used on web platforms)
+
+  }) async {
+    // Create a multipart HTTP request (POST) to your backend API
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/api/parent/'), // Backend endpoint
+    );
+
+    // Convert User map into JSON string and add to request fields
+    request.fields['user'] = jsonEncode(user);
+
+
+    // Convert Parent map into JSON string and add to request fields
+    request.fields['parent'] = jsonEncode(parent);
 
 
     // ---------------------- IMAGE HANDLING ----------------------
