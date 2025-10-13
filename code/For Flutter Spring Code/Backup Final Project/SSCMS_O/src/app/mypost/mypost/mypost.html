@@ -1,0 +1,63 @@
+<app-cnavbar></app-cnavbar>
+<div class="container py-5 bg-info bg-opacity-25">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-wrapper">
+    <div class="spinner"></div>
+    <p>Loading your jobs...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && errorMsg" class="error-box">
+    {{ errorMsg }}
+  </div>
+
+  <!-- Jobs Dashboard Table -->
+  <div *ngIf="!loading && jobs.length > 0" class="jobs-dashboard">
+    <div class="header-bar">
+      <h3>📋 Appointments Requests</h3>
+      <span class="count">Total: {{ jobs.length }}</span>
+    </div>
+
+    <div class="table-container">
+      <table class="jobs-table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Time</th>
+            <th>Remuneration</th>
+            <th>Description</th>
+            <th>Posted Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let job of jobs">
+            <td class="job-title">{{ job.title }}</td>
+            <td><span class="badge">{{ job.jobType }}</span></td>
+            <td class="salary">${{ job.salary }}</td>
+            <td>{{ job.description | slice:0:60 }}...</td>
+            <td>{{ job.postedDate | date:'mediumDate' }}</td>
+            <td class="actions">
+              <!-- <button [routerLink]="['/job/edit', job.id]" class="btn-action edit">
+                  ✏️ Edit
+                </button> -->
+              <button [routerLink]="['/application/', job.id]" class="btn-action applicants">
+                👥 Interested Candidate
+              </button>
+              <!-- <button class="btn-action delete">
+                  🗑️ Delete
+                </button> -->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- No Jobs -->
+  <div *ngIf="!loading && jobs.length === 0" class="no-jobs">
+    <p>🚫 You have not posted any jobs yet.</p>
+  </div>
+
+</div>

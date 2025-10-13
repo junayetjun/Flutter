@@ -1,0 +1,16 @@
+table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+th, td {
+  text-align: center;
+}
+
+.alert {
+  margin-top: 20px;
+}
+
+.spinner-border {
+  margin-top: 20px;
+}

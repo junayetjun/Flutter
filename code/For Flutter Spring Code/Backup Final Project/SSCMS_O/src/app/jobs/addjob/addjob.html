@@ -1,0 +1,82 @@
+<app-cnavbar></app-cnavbar>
+<div class="appointment-container">
+  <div class="appointment-card">
+    <h2 class="appointment-title">Issued Appointments</h2>
+
+    <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="appointment-form">
+
+      <div class="form-group">
+        <label for="title">Subject</label>
+        <input id="title" formControlName="title" />
+        <div *ngIf="isSubmitted && jobForm.controls['title'].errors" class="error-msg">
+          Subject is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" formControlName="description"></textarea>
+        <div *ngIf="isSubmitted && jobForm.controls['description'].errors" class="error-msg">
+          Description is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="location">Area</label>
+        <select id="location" formControlName="location">
+          <option value="" disabled selected>Select an Area</option>
+          <option *ngFor="let loc of locations" [value]="loc.id">{{ loc.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" formControlName="category">
+          <option value="" disabled selected>Select a Category</option>
+          <option *ngFor="let c of catagories" [value]="c.id">{{ c.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="salary">Remuneration</label>
+        <input type="number" id="salary" formControlName="salary" />
+        <div *ngIf="isSubmitted && jobForm.controls['salary'].errors" class="error-msg">
+          Remuneration must be a positive number.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="jobType">Service Type</label>
+        <select id="jobType" formControlName="jobType">
+          <option value="">Select Type</option>
+          <option value="Daylong-Care">Daylong Care</option>
+          <option value="Part-Day-Care">Part-Day Care</option>
+          <option value="Others">Others</option>
+        </select>
+        <div *ngIf="isSubmitted && jobForm.controls['jobType'].errors" class="error-msg">
+          Job type is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="postedDate">Post Date</label>
+        <input type="date" id="postedDate" formControlName="postedDate" />
+        <div *ngIf="isSubmitted && jobForm.controls['postedDate'].errors" class="error-msg">
+          Post Date is required.
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit">🚀 Submit</button>
+      </div>
+
+      <div *ngIf="successMessage" class="alert success-alert">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="alert error-alert">
+        {{ errorMessage }}
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="container mt-4 bg-danger bg-opacity-10">
+    <h2 class="text-center mb-4">Job List</h2>
+
+    <div *ngIf="jobs.length === 0" class="alert alert-info text-center">
+        No jobs available.
+    </div>
+
+    <div class="row">
+        <div *ngFor="let job of jobs" class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm bg-success bg-opacity-25">
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+
+                    <p class="card-text">
+                        <strong>Location:</strong> {{ job.location}}<br>
+
+
+                        <strong>Salary:</strong> {{ job.salary | currency }}<br>
+                        <strong>Type:</strong> {{ job.jobType }}<br>
+                        <strong>Posted:</strong> {{ job.postedDate | date:'mediumDate' }}<br>
+                    </p>
+                    <hr>
+                    <h6>Parent Info</h6>
+                    <p class="card-text">
+                        <strong>Company:</strong> {{ job.parentName }}<br>
+                        <strong>Contact:</strong> {{ job.contactPerson }}<br>
+                        <strong>Email:</strong> {{ job.email }}<br>
+                        <strong>Phone:</strong> {{ job.phone }}<br>
+                        <strong>Website:</strong> <a [href]="job.childName" target="_blank">{{ job.childName
+                            }}</a>
+                    </p>
+                </div>
+                <div class="card-footer text-end">
+                    <button class="btn btn-primary btn-sm" [routerLink]="['/jobs', job.id]">View</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

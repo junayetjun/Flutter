@@ -1,0 +1,41 @@
+<div class="container mt-5 p-4 border rounded shadow-sm bg-white" style="max-width: 800px;">
+    <h2 class="mb-4 text-center text-primary">Registered Parents</h2>
+
+    <!-- Message for errors or empty state -->
+    <div *ngIf="message" class="alert alert-danger">
+        {{ message }}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="loading" class="text-center">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Loading...
+    </div>
+
+    <!-- Parent List Table -->
+    <table *ngIf="!loading && parents.length > 0" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Child's Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let parent of parents; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ parent.name }}</td>
+                <td>{{ parent.email }}</td>
+                <td>{{ parent.phone }}</td>
+                <td>{{ parent.childName }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- No Parents Found -->
+    <div *ngIf="!loading && parents.length === 0" class="text-center text-muted">
+        No parents registered yet.
+    </div>
+</div>

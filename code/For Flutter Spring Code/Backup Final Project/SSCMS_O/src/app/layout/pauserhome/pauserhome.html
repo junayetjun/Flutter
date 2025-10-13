@@ -1,0 +1,100 @@
+<div class="container py-5">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">CompanyLogo</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Portfolio</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Employer Profile Card -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div *ngIf="parent" class="card">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-building me-2"></i>
+                        Parent Profile
+                    </h4>
+                </div>
+
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <!-- Company Logo -->
+                        <div class="col-md-3 text-center mb-4 mb-md-0">
+                            <img [src]="'http://localhost:8085/images/parent/' + parent.photo" alt="Parent Photo"
+                                class="img-thumbnail rounded-circle mb-3" />
+                            <h5 class="fw-bold text-primary">{{ parent.parentName || 'Parent Name' }}</h5>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="col-md-9">
+                            <div class="info-item">
+                                <i class="bi bi-person-fill"></i>
+                                <strong>Contact Person:</strong>
+                                <span>{{ parent.contactPerson }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="bi bi-envelope-fill"></i>
+                                <strong>Email:</strong>
+                                <span>{{ parent.email }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="bi bi-telephone-fill"></i>
+                                <strong>Phone:</strong>
+                                <span>{{ parent.phone }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="bi bi-globe"></i>
+                                <strong>Child Name:</strong>
+                                <a [href]="parent.website" target="_blank" class="link-primary">
+                                    {{ parent.childName }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="!parent" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 text-muted">Loading parent profile...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Card (now below parent profile) -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 menu-card">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Menu</h5>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" [routerLink]="['/myjob']">
+                            <i class="bi bi-briefcase-fill me-2"></i> My Jobs
+                        </button>
+                        <button class="btn btn-outline-primary" [routerLink]="['/addjob']">
+                            <i class="bi bi-plus-circle me-2"></i> Post New Job
+                        </button>
+                        <button class="btn btn-outline-primary" [routerLink]="['/profile/edit']">
+                            <i class="bi bi-person-gear me-2"></i> Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fixed Logout Button -->
+<button class="fixed-logout" (click)="onLogout()">
+    <i class="bi bi-box-arrow-right"></i> Logout
+</button>

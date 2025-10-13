@@ -1,0 +1,144 @@
+/* Loading Spinner */
+.loading-wrapper {
+  text-align: center;
+  padding: 50px 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #6c757d;
+}
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #e9ecef;
+  border-top: 5px solid #0d6efd;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Alerts */
+.alert {
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin: 20px 0;
+  font-weight: 500;
+}
+.error-alert {
+  background: #f8d7da;
+  color: #842029;
+}
+.info-alert {
+  background: #cff4fc;
+  color: #055160;
+}
+
+/* Applications Grid */
+.applications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+/* Application Card */
+.app-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.app-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #f1f3f5;
+}
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #0d6efd;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-right: 15px;
+}
+.header-info h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #212529;
+}
+.header-info span {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* Card Body */
+.card-body {
+  padding: 15px;
+  font-size: 0.9rem;
+  color: #495057;
+}
+.card-body p {
+  margin: 5px 0;
+}
+
+/* Card Footer */
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 15px;
+  border-top: 1px solid #f1f3f5;
+}
+.card-footer button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.btn-view {
+  background: #0d6efd;
+  color: #fff;
+}
+.btn-view:hover {
+  background: #0b5ed7;
+}
+.btn-message {
+  background: #6c757d;
+  color: #fff;
+}
+.btn-message:hover {
+  background: #5c636a;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .avatar {
+    margin-bottom: 10px;
+  }
+  .card-footer {
+    flex-direction: column;
+    gap: 5px;
+  }
+}

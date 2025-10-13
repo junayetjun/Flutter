@@ -1,0 +1,39 @@
+<app-cnavbar></app-cnavbar>
+<!-- Loading -->
+<div *ngIf="loading" class="loading-wrapper">
+  <div class="spinner"></div>
+  <p>Loading applications...</p>
+</div>
+
+<!-- Error -->
+<div *ngIf="errorMessage" class="alert error-alert">
+  {{ errorMessage }}
+</div>
+
+<!-- Slider Container -->
+<div *ngIf="applications.length > 0" class="applications-slider">
+  <div *ngFor="let app of applications" class="app-card">
+    <div class="card-header">
+      <div class="avatar">{{ app.caregiverName.charAt(0) }}</div>
+      {{ app.experiences}}
+      <div class="header-info">
+        <h4>{{ app.caregiverName }}</h4>
+        <span>Applied for: {{ app.jobTitle }}</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><strong>Customer:</strong> {{ app.parentName }}</p>
+      <p><strong>Post ID:</strong> {{ app.jobId }}</p>
+      <p><strong>Inquiry ID:</strong> {{ app.id }}</p>
+    </div>
+    <div class="card-footer">
+      <button class="btn-view" (click)="viewDetails(app.caregiverId)">View Details</button>
+      <button class="btn-message">Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- No Applications -->
+<div *ngIf="!loading && applications.length === 0" class="alert info-alert">
+  No candidates yet for this job.
+</div>

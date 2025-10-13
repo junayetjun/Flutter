@@ -1,0 +1,111 @@
+/* Container */
+.appointment-container {
+  display: flex;
+  justify-content: center;
+  padding: 50px 20px;
+  background: #f0f4f8;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card */
+.appointment-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 1000px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.appointment-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 40px rgba(0,0,0,0.15);
+}
+
+/* Title */
+.appointment-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #5351dd;
+  margin-bottom: 30px;
+}
+
+/* Form */
+.appointment-form .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+.appointment-form label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #495057;
+}
+.appointment-form input,
+.appointment-form textarea,
+.appointment-form select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #ced4da;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+.appointment-form input:focus,
+.appointment-form textarea:focus,
+.appointment-form select:focus {
+  border-color: #617eff;
+  box-shadow: 0 0 8px rgba(255,111,97,0.2);
+}
+
+/* Textarea */
+.appointment-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Error Messages */
+.error-msg {
+  color: #3562dc;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* Submit Button */
+.form-actions {
+  text-align: center;
+  margin-top: 25px;
+}
+.form-actions button {
+  background: linear-gradient(90deg, #6179ff, #72bbff);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.form-actions button:hover {
+  background: linear-gradient(90deg, #729fff, #617eff);
+  transform: translateY(-2px);
+}
+
+/* Alerts */
+.alert {
+  padding: 12px 18px;
+  border-radius: 10px;
+  margin-top: 20px;
+  font-weight: 500;
+}
+.success-alert {
+  background: #d1e7dd;
+  color: #0f5132;
+}
+.error-alert {
+  background: #f8d7da;
+  color: #842029;
+}

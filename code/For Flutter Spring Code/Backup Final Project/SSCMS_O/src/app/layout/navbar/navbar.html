@@ -1,0 +1,156 @@
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/home" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="logo-text">Little Angel Daycare</div>
+            </a>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/home" class="nav-link">Find Customer</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/caregiverpro" class="nav-link">My Profile</a>
+                </li>
+               
+                <li class="nav-item">
+                    <a href="/contact" class="nav-link">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/login" class="nav-link">Login</a>
+                </li>
+            </ul>
+
+            <div class="nav-actions">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search...">
+                </div>
+               <button class="logout-button" (click)="onLogout()">Logout</button>
+
+
+            </div>
+            <!-- Sign Up Button -->
+            
+
+
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- this is for admin -->
+    <!-- <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/home" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="logo-text">Day Care</div>
+            </a>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/caregiverpro" class="nav-link">My Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">About Caregiver <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown">
+                        <a href="/addcare" class="dropdown-item">Registration Caregiver</a>
+                        <a href="#" class="dropdown-item">Leadership Team</a>
+                        <a href="#" class="dropdown-item">Careers</a>
+                        <a href="#" class="dropdown-item">News & Press</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">About Parent <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown">
+                        <a href="/addparent" class="dropdown-item">Registration Parent</a>
+                        <a href="#" class="dropdown-item">Financial Services</a>
+                        <a href="#" class="dropdown-item">Technology Solutions</a>
+                        <a href="#" class="dropdown-item">Risk Management</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="/addcategory" class="nav-link">Add Category<i class="fas fa-chevron-down"></i></a>
+                    
+                </li>
+                <li class="nav-item">
+                    <a href="/addloc" class="nav-link">Add Location</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/login" class="nav-link">Login</a>
+                </li>
+            </ul>
+
+            <div class="nav-actions">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search...">
+                </div>
+               <button class="logout-button" (click)="onLogout()">Logout</button>
+
+
+            </div> -->
+            <!-- Sign Up Button -->
+            
+
+
+            <!-- <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav> -->
+<!-- End of Admin -->
+
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Mobile dropdown toggle
+        const navItems = document.querySelectorAll('.nav-item');
+
+        navItems.forEach(item => {
+            const navLink = item.querySelector('.nav-link');
+
+            if (navLink && window.innerWidth <= 768) {
+                navLink.addEventListener('click', (e) => {
+                    if (item.querySelector('.dropdown')) {
+                        e.preventDefault();
+                        item.classList.toggle('active');
+                    }
+                });
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            } else {
+                navbar.style.boxShadow = '0 1px 5px rgba(0, 0, 0, 0.08)';
+            }
+        });
+    </script>

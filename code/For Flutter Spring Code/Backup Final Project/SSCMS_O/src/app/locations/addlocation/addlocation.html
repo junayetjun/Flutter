@@ -1,0 +1,44 @@
+<div class="container mt-4">
+    <h3>Location Management</h3>
+
+    <!-- Add / Update Form -->
+    <form [formGroup]="locationForm" (ngSubmit)="onSubmit()" class="mb-3">
+        <div class="mb-3">
+            <label for="name" class="form-label">Location Name</label>
+            <input id="name" type="text" class="form-control" formControlName="name"
+                placeholder="Enter location name" />
+            <div *ngIf="locationForm.controls['name'].invalid && locationForm.controls['name'].touched"
+                class="text-danger">
+                Location name is required.
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary me-2" [disabled]="locationForm.invalid">
+            {{ editMode ? 'Update Location' : 'Add Location' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()" *ngIf="editMode">
+            Cancel
+        </button>
+    </form>
+
+    <!-- Locations Table -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Location Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let loc of locations">
+                <td>{{ loc.id }}</td>
+                <td>{{ loc.name }}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning me-2" (click)="editLocation(loc)">Edit</button>
+                    <button class="btn btn-sm btn-danger" (click)="deleteLocation(loc.id!)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

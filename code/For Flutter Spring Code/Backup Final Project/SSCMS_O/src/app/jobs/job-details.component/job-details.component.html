@@ -1,0 +1,44 @@
+<app-navbar></app-navbar>
+
+<div class="mainpart">
+    <div class="container mt-4" *ngIf="job; else loading">
+        <h2>{{ job.title }}</h2>
+        <p><strong>Location:</strong> {{ job.location }}</p>
+        <p><strong>Salary:</strong> {{ job.salary | currency }}</p>
+        <p><strong>Type:</strong> {{ job.jobType }}</p>
+        <p><strong>Service Description:</strong></p>
+        <p>{{ job.description }}</p>
+
+        <hr>
+        <h4>Parent Info</h4>
+
+        <div class="d-flex align-items-center mb-3">
+            <img *ngIf="job.photo" [src]="'http://localhost:8085/images/parent/' + job.photo"
+                alt="{{ job.parentName }} photo" class="img-fluid me-3" style="max-height: 80px; border-radius: 8px;"
+                (error)="onLogoError($event)">
+
+            <div>
+                <p><strong>Parent Name: </strong> {{ job.parentName }}</p>
+                <p><strong>Contact Person: </strong> {{ job.contactPerson }}</p>
+                <p><strong>Email: </strong> {{ job.email }}</p>
+                <p><strong>Contact Number: </strong> {{ job.phone }}</p>
+                <p><strong>Child Name: </strong>
+                    <a [href]="job.childName" target="_blank">{{ job.childName }}</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Apply Button -->
+        <div class="text-center mt-3">
+            <button class="btn btn-success btn-lg" (click)="applyJob(job.id, job.parentId)">
+                Interested in This Service
+            </button>
+        </div>
+    </div>
+
+    <ng-template #loading>
+        <div class="text-center mt-4">
+            <p>Loading job details...</p>
+        </div>
+    </ng-template>
+</div>

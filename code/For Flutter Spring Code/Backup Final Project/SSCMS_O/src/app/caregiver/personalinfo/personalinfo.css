@@ -1,0 +1,272 @@
+.mainpart {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(120deg, #fdfbfb, #ebedee);
+    color: #333;
+}
+
+.mainpart {
+    max-width: 1300px;
+    /* wider */
+    margin: 50px auto;
+    padding: 60px;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12);
+    position: relative;
+    text-align: center;
+}
+
+/* Top-right Applied Jobs */
+.mainpart .btn-outline-primary {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    border-radius: 35px;
+    font-weight: 600;
+    padding: 12px 25px;
+    font-size: 16px;
+}
+
+/* Button grid */
+.mainpart .action-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    /* larger buttons */
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.mainpart .action-buttons .btn {
+    padding: 25px;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mainpart .action-buttons .btn:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* Color scheme for each */
+.btn-education {
+    background: #e3f2fd;
+    color: #0d47a1;
+    border: none;
+}
+
+.btn-experience {
+    background: #f1f8e9;
+    color: #1b5e20;
+    border: none;
+}
+
+.btn-skill {
+    background: #fff3e0;
+    color: #e65100;
+    border: none;
+}
+
+.btn-reference {
+    background: #fce4ec;
+    color: #880e4f;
+    border: none;
+}
+
+.btn-language {
+    background: #ede7f6;
+    color: #311b92;
+    border: none;
+}
+
+.btn-hobby {
+    background: #e0f7fa;
+    color: #006064;
+    border: none;
+}
+
+
+.centered-line {
+    text-align: center;
+    /* Center the text */
+    font-size: 28px;
+    /* Bigger font */
+    font-weight: 700;
+    /* Bold */
+    color: #2575fc;
+    /* Gradient-like color */
+    position: relative;
+    /* Needed for pseudo element */
+    margin: 30px 0 20px 0;
+    /* Spacing around */
+    letter-spacing: 1px;
+    /* Slightly spaced letters */
+}
+
+/* Underline with gradient */
+.centered-line::after {
+    content: "";
+    display: block;
+    width: 60px;
+    /* Length of underline */
+    height: 4px;
+    /* Thickness */
+    margin: 10px auto 0 auto;
+    /* Center it below text */
+    border-radius: 2px;
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    /* Gradient underline */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Modal (Bigger & Spacious) */
+/* ---------- General Body & Fonts ---------- */
+.additional {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    /* subtle light background */
+    color: #333;
+}
+
+/* ---------- Modal Dialog ---------- */
+.modal-dialog {
+    max-width: 650px;
+    margin: 2rem auto;
+}
+
+.modal-content {
+    border-radius: 15px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    border: none;
+    background: #ffffff;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.modal-content:hover {
+    transform: translateY(-3px);
+}
+
+/* ---------- Modal Header ---------- */
+.modal-header {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    justify-content: center;
+    text-align: center;
+    border-bottom: none;
+    padding: 20px;
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.9;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+.modal-header .btn-close:hover {
+    transform: scale(1.2);
+    opacity: 1;
+}
+
+/* ---------- Modal Body ---------- */
+.modal-body {
+    padding: 30px;
+}
+
+/* Form Headings */
+.modal-body h2 {
+    text-align: center;
+    color: #2575fc;
+    font-weight: 700;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.modal-body h2::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 4px;
+    margin: 10px auto 20px auto;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------- Inputs & Selects ---------- */
+.modal-body input.form-control,
+.modal-body select.form-select,
+.modal-body textarea.form-control {
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.modal-body input.form-control:focus,
+.modal-body select.form-select:focus,
+.modal-body textarea.form-control:focus {
+    border-color: #2575fc;
+    box-shadow: 0 0 10px rgba(37, 117, 252, 0.2);
+    outline: none;
+}
+
+/* ---------- Labels ---------- */
+.modal-body label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+    color: #555;
+}
+
+/* ---------- Buttons ---------- */
+.modal-body .btn-primary {
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 25px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.modal-body .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 117, 252, 0.3);
+}
+
+/* Secondary / Cancel Buttons */
+.modal-body .btn-secondary {
+    background: #ccc;
+    color: #333;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.modal-body .btn-secondary:hover {
+    background: #b3b3b3;
+}
+
+/* ---------- Responsive Adjustments ---------- */
+@media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 90%;
+        margin: 1rem auto;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+}

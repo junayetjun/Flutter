@@ -1,0 +1,19 @@
+/* caregiver-list.component.css */
+
+.table {
+  margin-top: 20px;
+  background-color: #f8f9fa;
+}
+
+thead {
+  background-color: #007bff;
+  color: white;
+}
+
+thead th {
+  text-align: center;
+}
+
+tbody td {
+  text-align: center;
+}

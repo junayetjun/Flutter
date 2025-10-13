@@ -1,0 +1,241 @@
+<app-navbar></app-navbar>
+<div class="mainpart">
+    <!-- <button type="button" class="btn btn-sm btn-outline-primary" routerLink="/apply">
+        Applied Jobs
+    </button> -->
+    <h2 class="centered-line">Attach Your Personal Information</h2>
+
+    <div class="action-buttons">
+        <button type="button" class="btn btn-education" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            📘 Attach Academic Details
+        </button>
+        <button type="button" class="btn btn-experience" data-bs-toggle="modal" data-bs-target="#experienceModal">
+            💼 Add Career Journey
+        </button>
+        <button type="button" class="btn btn-skill" data-bs-toggle="modal" data-bs-target="#skillModal">
+            🛠️ Attach Expertise
+        </button>
+        <button type="button" class="btn btn-reference" data-bs-toggle="modal" data-bs-target="#referenceModal">
+            🤝 Include Recommendation
+        </button>
+        <button type="button" class="btn btn-language" data-bs-toggle="modal" data-bs-target="#languageModal">
+            🌍 Add Language Proficiency
+        </button>
+        <button type="button" class="btn btn-hobby" data-bs-toggle="modal" data-bs-target="#hobbyModal">
+            🎨 Hobbies & Interests
+        </button>
+    </div>
+
+
+
+    <main class="additional">
+        <!--education Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Attach Your Academic Information</h1>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <form (ngSubmit)="addEducation()">
+                            <div class="mb-3">
+                                <label>Class</label>
+                                <input type="text" [(ngModel)]="newEducation.level" name="level" class="form-control"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Institute</label>
+                                <input type="text" [(ngModel)]="newEducation.institute" name="institute"
+                                    class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Result</label>
+                                <input type="text" [(ngModel)]="newEducation.result" name="result" class="form-control"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Year</label>
+                                <input type="text" [(ngModel)]="newEducation.year" name="year" class="form-control"
+                                    required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal close -->
+
+        <!-- Add Experience Modal -->
+        <div class="modal fade" id="experienceModal" tabindex="-1" aria-labelledby="experienceModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="experienceModalLabel">Add New Experience</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form (ngSubmit)="addExperience()">
+                            <div class="mb-3">
+                                <label>Company</label>
+                                <input type="text" [(ngModel)]="newExperience.institution" name="company"
+                                    class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Position</label>
+                                <input type="text" [(ngModel)]="newExperience.position" name="position"
+                                    class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>From Date</label>
+                                <input type="date" [(ngModel)]="newExperience.fromDate" name="fromDate"
+                                    class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>To Date</label>
+                                <input type="date" [(ngModel)]="newExperience.toDate" name="toDate"
+                                    class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label>Description</label>
+                                <textarea [(ngModel)]="newExperience.description" name="description"
+                                    class="form-control"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Experience</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal close -->
+
+        <!-- skill modal -->
+        <div class="modal fade" id="skillModal" tabindex="-1" aria-labelledby="skillModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="skillModalLabel">Add New Skill</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form (ngSubmit)="addSkill()">
+                            <div class="mb-3">
+                                <label for="skillName" class="form-label">Skill Name</label>
+                                <input type="text" id="skillName" [(ngModel)]="newSkill.name" name="name"
+                                    class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="skillLevel" class="form-label">Level</label>
+                                <select id="skillLevel" [(ngModel)]="newSkill.level" name="level" class="form-select"
+                                    required>
+                                    <option value="" disabled selected>Select level</option>
+                                    <option>Beginner</option>
+                                    <option>Intermediate</option>
+                                    <option>Expert</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Skill</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- skill modal close-->
+        <!-- refference modal -->
+        <div class="modal fade" id="referenceModal" tabindex="-1" aria-labelledby="referenceModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="referenceModalLabel">Add New Refference</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form (ngSubmit)="addReference()">
+                            <div class="mb-3">
+                                <label for="referenceName" class="form-label">Name</label>
+                                <input type="text" id="referenceName" [(ngModel)]="newReference.name" name="name"
+                                    class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="referenceContact" class="form-label">Contact</label>
+                                <input type="text" id="referenceContact" [(ngModel)]="newReference.contact"
+                                    name="contact" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="referenceRelation" class="form-label">Relation</label>
+                                <input type="text" id="referenceRelation" [(ngModel)]="newReference.relation"
+                                    name="relation" class="form-control" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Reference</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- refference modal close -->
+
+        <!-- language modal -->
+        <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="languageModalLabel">Add New Language</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form (ngSubmit)="addLanguage()">
+                            <div class="mb-3">
+                                <label for="languageName" class="form-label">Language Name</label>
+                                <input type="text" id="languageName" [(ngModel)]="newLanguage.name" name="name"
+                                    class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="languageProficiency" class="form-label">Proficiency</label>
+                                <select id="languageProficiency" [(ngModel)]="newLanguage.proficiency"
+                                    name="proficiency" class="form-select" required>
+                                    <option value="" disabled selected>Select proficiency</option>
+                                    <option>Basic</option>
+                                    <option>Fluent</option>
+                                    <option>Native</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Language</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- language modal close -->
+
+        <!-- hobby modal -->
+        <div class="modal fade" id="hobbyModal" tabindex="-1" aria-labelledby="hobbyModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="hobbyModalLabel">Add New Hobby</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form (ngSubmit)="addHobby()">
+                            <div class="mb-3">
+                                <label for="hobbyName" class="form-label">Hobby Name</label>
+                                <input type="text" id="hobbyName" [(ngModel)]="newHobby.name" name="name"
+                                    class="form-control" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Hobby</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- hobby modal close -->
+    </main>
+</div>

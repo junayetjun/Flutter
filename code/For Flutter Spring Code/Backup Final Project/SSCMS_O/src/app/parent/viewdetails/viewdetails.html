@@ -1,0 +1,88 @@
+<app-cnavbar></app-cnavbar>
+<button class="btn btn-outline-success my-3" (click)="downloadCV()">Download CV</button>
+
+<div #cvContent class="cv-container hidden">
+
+    <!-- Header -->
+    <!-- <div class="cv-header avoid-break text-center">
+        <img [src]="'http://localhost:8085/images/jobSeeker/' + caregiver?.photo" alt="Photo" class="cv-photo" />
+        <h2>{{ caregiver?.name }}</h2>
+        <p>{{ caregiver?.email }} | {{ caregiver?.phone }}</p>
+        <p>{{ caregiver?.address }}</p>
+    </div> -->
+
+
+
+    <!-- Work Experience -->
+    <div *ngIf="experiences.length > 0" class="cv-section avoid-break">
+        <h4>Work Experience</h4>
+        <ul>
+            <li *ngFor="let exp of experiences">
+                <strong>{{ exp.position }}</strong> at {{ exp.institution }}<br />
+                <small>{{ exp.fromDate }} to {{ exp.toDate || 'Present' }}</small><br />
+                <p>{{ exp.description }}</p>
+            </li>
+        </ul>
+    </div>
+
+
+    <!-- Education -->
+    <div *ngIf="educations.length > 0" class="cv-section avoid-break">
+        <h4>Education</h4>
+        <ul>
+            <li *ngFor="let edu of educations">
+                <strong>{{ edu.level }}</strong> - {{ edu.institute }} ({{ edu.year }})<br />
+                <strong>Result: </strong>{{ edu.result }} | {{ edu.board }}
+
+            </li>
+        </ul>
+    </div>
+
+
+
+    <!-- Skills -->
+    <div *ngIf="skills.length > 0" class="cv-section avoid-break">
+        <h4>Skills</h4>
+        <ul>
+            <li *ngFor="let skill of skills">
+                {{ skill.name }} - {{ skill.level }}
+            </li>
+        </ul>
+    </div>
+
+
+
+    <!-- Hobbies -->
+    <div *ngIf="hobbies.length > 0" class="cv-section avoid-break">
+        <h4>Hobbies</h4>
+        <ul>
+            <li *ngFor="let hobby of hobbies">{{ hobby.name }}</li>
+        </ul>
+    </div>
+
+    <!-- Languages -->
+    <div *ngIf="languages.length > 0" class="cv-section avoid-break">
+        <h4>Languages</h4>
+        <ul>
+            <li *ngFor="let lang of languages">
+                {{ lang.name }} - {{ lang.proficiency }}
+            </li>
+        </ul>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="cv-section avoid-break">
+        <h4>Profile of Caregiver</h4>
+
+
+        <!-- References -->
+        <div *ngIf="references.length > 0" class="cv-section avoid-break">
+            <h4>References</h4>
+            <ul>
+                <li *ngFor="let ref of references">
+                    <strong>{{ ref.name }}</strong><br />
+                    {{ ref.relation }} | {{ ref.contact }}
+                </li>
+            </ul>
+        </div>
+    </div>

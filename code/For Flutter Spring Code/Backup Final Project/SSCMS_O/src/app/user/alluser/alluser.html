@@ -1,0 +1,48 @@
+<div class="container my-5">
+    <div class="row">
+        <div *ngFor="let u of users" class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 rounded">
+                <img [src]="'http://localhost:8085/images/users/' + u.photo" class="card-img-top rounded-top"
+                    alt="{{ u.name }}'s photo" style="height: 200px; object-fit: cover;" />
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-primary">{{ u.name }}</h5>
+                    <p class="card-text mb-2">
+                        <i class="bi bi-envelope-fill me-2 text-secondary"></i>
+                        <strong>Email:</strong> {{ u.email }}
+                    </p>
+                    <p class="card-text">
+                        <i class="bi bi-telephone-fill me-2 text-secondary"></i>
+                        <strong>Phone:</strong> {{ u.phone }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add this in your styles or global stylesheet -->
+<style>
+    .card {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #fff;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    /* Bootstrap Icons CDN if not already added */
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css');
+</style>

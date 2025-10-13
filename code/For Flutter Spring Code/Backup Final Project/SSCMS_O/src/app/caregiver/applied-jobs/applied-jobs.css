@@ -1,0 +1,67 @@
+/* Container spacing */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Modern card design */
+.modern-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Card hover effect */
+.modern-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Card header */
+.modern-card .card-header {
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+}
+
+.modern-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0d6efd;
+  margin: 0;
+}
+
+/* Card body */
+.modern-card .card-body {
+  padding: 15px 20px;
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+.modern-card .card-body p {
+  margin: 5px 0;
+}
+
+/* Card footer and button */
+.modern-card .card-footer {
+  background-color: #f8f9fa;
+  text-align: right;
+  padding: 10px 20px;
+}
+
+.btn-modern {
+  background-color: #0d6efd;
+  color: #fff;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-modern:hover {
+  background-color: #0b5ed7;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}

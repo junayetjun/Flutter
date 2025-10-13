@@ -1,0 +1,123 @@
+/* === GLOBAL THEME RESET === */
+.mainpart {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: #f9fafb;
+}
+
+/* === MAIN CONTAINER === */
+.container {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 40px 50px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  transition: all 0.4s ease;
+}
+.container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+}
+
+/* === JOB TITLE === */
+.container h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.4);
+}
+.container h2::before {
+  content: "💼 ";
+}
+
+/* === INFO TEXT === */
+.container p {
+  font-size: 1.05rem;
+  margin: 6px 0;
+  color: #e5e7eb;
+}
+.container strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* === DIVIDER === */
+hr {
+  border: none;
+  height: 1px;
+  background: rgba(255,255,255,0.2);
+  margin: 28px 0;
+}
+
+/* === SECTION HEADING === */
+.container h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #fbbf24;
+  letter-spacing: 0.5px;
+}
+
+/* === PARENT INFO PANEL === */
+.d-flex {
+  display: flex;
+  align-items: center;
+  padding: 18px 22px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.d-flex img {
+  border-radius: 50%;
+  margin-right: 20px;
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border: 3px solid #60a5fa;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+}
+.d-flex p {
+  margin: 5px 0;
+  font-size: 0.95rem;
+  color: #f3f4f6;
+}
+.d-flex a {
+  color: #93c5fd;
+  font-weight: 500;
+  text-decoration: none;
+}
+.d-flex a:hover {
+  text-decoration: underline;
+  color: #60a5fa;
+}
+
+/* === APPLY BUTTON === */
+.btn-success {
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  border: none;
+  padding: 15px 42px;
+  border-radius: 40px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.45);
+  transition: all 0.3s ease;
+}
+.btn-success:hover {
+  background: linear-gradient(135deg, #0284c7, #1d4ed8);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 40px rgba(59, 130, 246, 0.6);
+}
+
+/* === LOADING TEXT === */
+.text-center {
+  font-size: 1.05rem;
+  color: #d1d5db;
+}

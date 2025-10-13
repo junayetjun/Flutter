@@ -1,0 +1,68 @@
+<app-cnavbar></app-cnavbar>
+
+<!-- Hero Section with Search Filters -->
+<section class="hero-section">
+  <div class="container text-center">
+    <h1 class="display-4 fw-bold">Find a Caregiver</h1>
+    <p class="lead mb-4 text-light">Find a Caregiver Near You</p>
+
+    <!-- Search Form -->
+    <form class="row g-2 justify-content-center" (ngSubmit)="filterJobs()">
+      <div class="col-md-3">
+          <select class="form-select" [(ngModel)]="selectedCategoryId" name="category">
+            <option [ngValue]="null">Select Your Type</option>
+            <option *ngFor="let category of categories" [ngValue]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+      <!-- <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="selectedLocationId" name="location">
+          <option [ngValue]="null">All Areas</option>
+          <option *ngFor="let location of locations" [ngValue]="location.id">
+            {{ location.name }}
+          </option>
+        </select>
+      </div> -->
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-search w-100">Search</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Caregivers Section -->
+<section class="service-providers">
+  <div class="container">
+    <h2 class="section-title">Our Caregivers</h2>
+
+    <div *ngIf="caregiver.length === 0" class="alert alert-info">
+      No caregiver available.
+    </div>
+
+    <div class="providers-grid">
+      <div *ngFor="let job of caregiver" class="provider-card">
+        <div class="provider-image">
+          <img [src]="'http://localhost:8085/images/parent/' + job.photo" alt="{{ job.photo }}">
+        </div>
+        <div class="provider-content">
+          <h3>{{ job.name }}</h3>
+          <div class="badges">
+            <span class="badge location">{{ job.gender }}</span>
+            <span class="badge type">{{ job.gender }}</span>
+            <span class="badge salary">{{ job.skill| currency }}</span>
+          </div>
+          <p><strong>Parent:</strong> {{ job.experience }}</p>
+          <p><strong>Contact:</strong> {{ job.phone }} | {{ job.phone }}</p>
+        </div>
+        <div class="provider-footer">
+          <!-- <button class="btn" [routerLink]="['/jobs', job.id]">View Profile</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
