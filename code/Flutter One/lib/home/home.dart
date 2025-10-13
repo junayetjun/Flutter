@@ -139,33 +139,33 @@ class _HomePageState extends State<HomePage> {
                                   child: Text("Register As"),
                                 ),
                                 DropdownMenuItem(
-                                  value: "parent",
-                                  child: Text("Parent"),
+                                  value: "PARENT",
+                                  child: Text("PARENT"),
                                 ),
                                 DropdownMenuItem(
-                                  value: "caregiver",
-                                  child: Text("Caregiver"),
+                                  value: "CAREGIVER",
+                                  child: Text("CAREGIVER"),
                                 ),
                                 DropdownMenuItem(
-                                  value: "admin",
-                                  child: Text("Admin"),
+                                  value: "ADMIN",
+                                  child: Text("ADMIN"),
                                 ),
                               ],
                               onChanged: (value) async {
                                 setState(() => selectedRole = value);
 
                                 // Navigate based on selection
-                                if (value == "parent") {
+                                if (value == "PARENT") {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => ParentRegistrationPage()),
                                   );
-                                } else if (value == "caregiver") {
+                                } else if (value == "CAREGIVER") {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => Registration()),
                                   );
-                                } else if (value == "admin") {
+                                } else if (value == "ADMIN") {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => AdminRegistrationPage()),
