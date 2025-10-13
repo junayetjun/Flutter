@@ -1,4 +1,6 @@
 import 'package:dreamjob/home/home.dart';
+import 'package:dreamjob/page/add_job_page.dart';
+import 'package:dreamjob/page/add_location_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {

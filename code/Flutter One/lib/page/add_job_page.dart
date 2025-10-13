@@ -1,144 +1,234 @@
-
-
-
 import 'package:flutter/material.dart';
+import 'package:dreamjob/entity/category.dart';
+import 'package:dreamjob/entity/location.dart';
+import 'package:dreamjob/service/category_service.dart';
+import 'package:dreamjob/service/location_service.dart';
+import 'package:dreamjob/service/job_service.dart';
 
-class AddJobForm extends StatefulWidget {
-  const AddJobForm({super.key});
+class AddJobPage extends StatefulWidget {
+  const AddJobPage({Key? key}) : super(key: key);
 
   @override
-  State<AddJobForm> createState() => _AddJobFormState();
+  State<AddJobPage> createState() => _AddJobPageState();
 }
 
-class _AddJobFormState extends State<AddJobForm> {
+class _AddJobPageState extends State<AddJobPage> {
   final _formKey = GlobalKey<FormState>();
-  bool isSubmitted = false;
+  bool _isSubmitted = false;
 
+  // Controllers for text fields
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _salaryController = TextEditingController();
   final TextEditingController _postedDateController = TextEditingController();
-  final TextEditingController _endDateController = TextEditingController();
 
-  // Dummy dropdown options
-  final List<String> _locations = ['Dhaka', 'Chittagong', 'Sylhet'];
-  final List<String> _categories = ['Software', 'Marketing', 'Finance'];
-
-  String? _selectedLocation;
-  String? _selectedCategory;
+  // Dropdown selections
+  Location? _selectedLocation;
+  Category? _selectedCategory;
   String? _selectedJobType;
 
   String? successMessage;
   String? errorMessage;
 
-  // Utility: Pick a date and update controller
-  Future<void> _pickDate(TextEditingController controller) async {
-    DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2022),
-      lastDate: DateTime(2030),
-    );
-    if (date != null) {
-      controller.text = date.toIso8601String().split('T').first;
+  // Data lists
+  List<Location> _locations = [];
+  List<Category> _categories = [];
+  bool _isLoadingData = true;
+
+  // Services
+  final LocationService _locationService = LocationService();
+  final CategoryService _categoryService = CategoryService();
+  final JobService _jobService = JobService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocationsAndCategories();
+  }
+
+  Future<void> _loadLocationsAndCategories() async {
+    try {
+      final locs = await _locationService.getAllLocations();
+      final cats = await _categoryService.fetchCategories();
+      setState(() {
+        _locations = locs;
+        _categories = cats;
+        _isLoadingData = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingData = false;
+        errorMessage = 'Failed to load support data: $e';
+      });
     }
   }
 
-  void _onSubmit() {
+  void _submit() {
     setState(() {
-      isSubmitted = true;
+      _isSubmitted = true;
+      successMessage = null;
+      errorMessage = null;
     });
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        successMessage = '✅ Job added successfully!';
-        errorMessage = null;
-      });
-    } else {
-      setState(() {
-        errorMessage = '❌ Please fill all required fields correctly.';
-        successMessage = null;
-      });
+
+    if (!_formKey.currentState!.validate()) {
+      return;
     }
+
+    final formValue = {
+      'title': _titleController.text.trim(),
+      'description': _descriptionController.text.trim(),
+      'salary': double.tryParse(_salaryController.text) ?? 0.0,
+      'jobType': _selectedJobType,
+      'postedDate': _postedDateController.text,
+      'location': {'id': _selectedLocation?.id},
+      'category': {'id': _selectedCategory?.id},
+    };
+
+    _jobService.createJob(formValue).then((res) {
+      setState(() {
+        successMessage = 'Job posted successfully!';
+        errorMessage = null;
+        _isSubmitted = false;
+      });
+      _formKey.currentState!.reset();
+      // Clear controllers and selections
+      _titleController.clear();
+      _descriptionController.clear();
+      _salaryController.clear();
+      _postedDateController.clear();
+      _selectedLocation = null;
+      _selectedCategory = null;
+      _selectedJobType = null;
+    }).catchError((err) {
+      setState(() {
+        successMessage = null;
+        errorMessage = 'Failed to post job: $err';
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🎨 Add New Job'),
-        backgroundColor: Colors.deepOrangeAccent,
+        title: const Text('Add Job'),
       ),
-      body: Container(
+      body: _isLoadingData
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFFF9A9E), Color(0xFFFAD0C4)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black26, blurRadius: 10),
-                ],
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    const Text(
-                      '🚀 Add New Job',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFFF6F61),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+        child: Card(
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Create New Job',
+                    style: TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
 
-                    _buildTextField('Job Title', 'Enter job title'),
-                    _buildTextField('Job Purpose', 'Enter job purpose'),
-                    _buildTextField('Key Responsibilities', 'List key responsibilities'),
-                    _buildTextField('Education Requirements', 'List education requirements'),
-                    _buildTextField('Experience Requirements', 'List experience requirements'),
-                    _buildTextField('Benefits', 'Mention any benefits'),
+                  // Title
+                  _buildTextField(
+                    controller: _titleController,
+                    label: 'Title',
+                    validator: (value) {
+                      if (_isSubmitted && (value == null || value.isEmpty)) {
+                        return 'Title is required';
+                      }
+                      return null;
+                    },
+                  ),
 
-                    _buildDropdown('Location', _locations, _selectedLocation, (val) {
-                      setState(() => _selectedLocation = val);
-                    }),
-                    _buildDropdown('Job Field', _categories, _selectedCategory, (val) {
-                      setState(() => _selectedCategory = val);
-                    }),
-                    _buildNumberField('Salary'),
+                  // Description
+                  _buildTextField(
+                    controller: _descriptionController,
+                    label: 'Description',
+                    maxLines: 3,
+                    validator: (value) {
+                      if (_isSubmitted && (value == null || value.isEmpty)) {
+                        return 'Description is required';
+                      }
+                      return null;
+                    },
+                  ),
 
-                    _buildDropdown('Job Type', ['Full-Time', 'Part-Time', 'Internship'], _selectedJobType, (val) {
-                      setState(() => _selectedJobType = val);
-                    }),
+                  // Salary
+                  _buildTextField(
+                    controller: _salaryController,
+                    label: 'Salary',
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (!_isSubmitted) return null;
+                      final num? val = num.tryParse(value ?? '');
+                      if (val == null || val < 0) {
+                        return 'Salary must be positive';
+                      }
+                      return null;
+                    },
+                  ),
 
-                    _buildDateField('Post Date', _postedDateController),
-                    _buildDateField('Deadline', _endDateController),
+                  // Job Type dropdown
+                  _buildJobTypeDropdown(),
 
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _onSubmit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                  // Posted Date
+                  _buildTextField(
+                    controller: _postedDateController,
+                    label: 'Posted Date',
+                    onTap: () async {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        _postedDateController.text = picked.toIso8601String()
+                            .split('T')
+                            .first;
+                      }
+                    },
+                    validator: (value) {
+                      if (_isSubmitted && (value == null || value.isEmpty)) {
+                        return 'Posted Date is required';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // Location dropdown
+                  _buildLocationDropdown(),
+
+                  // Category dropdown
+                  _buildCategoryDropdown(),
+
+                  const SizedBox(height: 20),
+
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: _submit,
                       child: const Text('Submit'),
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 14)),
                     ),
+                  ),
 
-                    const SizedBox(height: 16),
-                    if (successMessage != null)
-                      Text(successMessage!, style: const TextStyle(color: Colors.green)),
-                    if (errorMessage != null)
-                      Text(errorMessage!, style: const TextStyle(color: Colors.red)),
-                  ],
-                ),
+                  const SizedBox(height: 20),
+
+                  if (successMessage != null)
+                    _buildAlert(successMessage!, Colors.green),
+                  if (errorMessage != null)
+                    _buildAlert(errorMessage!, Colors.red),
+                ],
               ),
             ),
           ),
@@ -147,67 +237,132 @@ class _AddJobFormState extends State<AddJobForm> {
     );
   }
 
-  Widget _buildTextField(String label, String hint) {
+  Widget _buildLocationDropdown() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: TextFormField(
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          border: const OutlineInputBorder(),
+      padding: const EdgeInsets.only(bottom: 16),
+      child: DropdownButtonFormField<Location>(
+        decoration: const InputDecoration(
+          labelText: 'Location',
+          border: OutlineInputBorder(),
         ),
-        validator: (value) => value == null || value.isEmpty ? '$label is required.' : null,
-      ),
-    );
-  }
-
-  Widget _buildNumberField(String label) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: TextFormField(
-        keyboardType: TextInputType.number,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
+        value: _selectedLocation,
+        items: _locations
+            .map((loc) => DropdownMenuItem<Location>(
+            value: loc, child: Text(loc.name)))
+            .toList(),
+        onChanged: (loc) {
+          setState(() {
+            _selectedLocation = loc;
+          });
+        },
         validator: (value) {
-          if (value == null || value.isEmpty) return '$label is required.';
-          final number = int.tryParse(value);
-          if (number == null || number <= 0) return '$label must be a positive number.';
+          if (_isSubmitted && value == null) {
+            return 'Please pick a location';
+          }
           return null;
         },
       ),
     );
   }
 
-  Widget _buildDropdown(String label, List<String> items, String? selected, ValueChanged<String?> onChanged) {
+  Widget _buildCategoryDropdown() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: DropdownButtonFormField<String>(
-        value: selected,
-        items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-        onChanged: onChanged,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
+      padding: const EdgeInsets.only(bottom: 16),
+      child: DropdownButtonFormField<Category>(
+        decoration: const InputDecoration(
+          labelText: 'Category',
+          border: OutlineInputBorder(),
         ),
-        validator: (value) => value == null ? '$label is required.' : null,
+        value: _selectedCategory,
+        items: _categories
+            .map((cat) =>
+            DropdownMenuItem<Category>(value: cat, child: Text(cat.name)))
+            .toList(),
+        onChanged: (cat) {
+          setState(() {
+            _selectedCategory = cat;
+          });
+        },
+        validator: (value) {
+          if (_isSubmitted && value == null) {
+            return 'Please pick a category';
+          }
+          return null;
+        },
       ),
     );
   }
 
-  Widget _buildDateField(String label, TextEditingController controller) {
+  Widget _buildJobTypeDropdown() {
+    const jobTypes = [
+      'Daylong-Care',
+      'Part-Day-Care',
+      'Others',
+    ];
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.only(bottom: 16),
+      child: DropdownButtonFormField<String>(
+        decoration: const InputDecoration(
+          labelText: 'Job Type',
+          border: OutlineInputBorder(),
+        ),
+        value: _selectedJobType,
+        items: jobTypes
+            .map((jt) => DropdownMenuItem<String>(value: jt, child: Text(jt)))
+            .toList(),
+        onChanged: (val) {
+          setState(() {
+            _selectedJobType = val;
+          });
+        },
+        validator: (value) {
+          if (_isSubmitted && (value == null || value.isEmpty)) {
+            return 'Job Type is required';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+    VoidCallback? onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
-        readOnly: true,
-        onTap: () => _pickDate(controller),
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+        readOnly: onTap != null,
+        onTap: onTap,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
         ),
-        validator: (value) => value == null || value.isEmpty ? '$label is required.' : null,
+        validator: validator,
+      ),
+    );
+  }
+
+  Widget _buildAlert(String message, Color color) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        border: Border.all(color: color),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        message,
+        style: TextStyle(color: color, fontWeight: FontWeight.w600),
       ),
     );
   }

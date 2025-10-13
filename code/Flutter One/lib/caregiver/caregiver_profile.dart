@@ -1,3 +1,4 @@
+import 'package:dreamjob/caregiver/caregiver_home_page.dart';
 import 'package:dreamjob/page/education_page.dart';
 import 'package:dreamjob/page/loginpage.dart';
 import 'package:dreamjob/service/authservice.dart';
@@ -131,11 +132,24 @@ class CaregiverProfile extends StatelessWidget {
           ),
           _buildDrawerItem(
             context,
+            Icons.home,
+            "Home",
+                () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => CaregiverHome()),
+              );
+            },
+          ),
+          _buildDrawerItem(
+            context,
             Icons.book,
             "Education",
                 () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (_) => EducationListScreen()));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => EducationListScreen()));
             },
           ),
           _buildDrawerItem(
@@ -147,8 +161,8 @@ class CaregiverProfile extends StatelessWidget {
             "Logout",
                 () async {
               await _authService.logout();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (_) => LoginPage()));
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => LoginPage()));
             },
             color: Colors.red,
           ),
@@ -156,6 +170,8 @@ class CaregiverProfile extends StatelessWidget {
       ),
     );
   }
+
+
 
   ListTile _buildDrawerItem(BuildContext context, IconData icon, String title,
       VoidCallback onTap, {Color? color}) {
