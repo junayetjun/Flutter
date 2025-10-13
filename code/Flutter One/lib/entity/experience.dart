@@ -2,7 +2,7 @@
 
 class Experience {
   int? id;
-  Null? company;
+  String? company;
   String? position;
   String? fromDate;
   String? toDate;

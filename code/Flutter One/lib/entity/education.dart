@@ -2,7 +2,7 @@ class Education {
   int? id;
   String? level;
   String? institute;
-  Null? board;
+  String? board;
   String? result;
   String? year;
 

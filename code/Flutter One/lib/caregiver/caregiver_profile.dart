@@ -1,5 +1,6 @@
 
 
+import 'package:dreamjob/page/education_page.dart';
 import 'package:dreamjob/page/loginpage.dart';
 import 'package:dreamjob/service/authservice.dart';
 import 'package:flutter/material.dart';
@@ -31,178 +32,241 @@ class CaregiverProfile extends StatelessWidget {
     // ----------------------------
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Caregiver profile",
-        style: TextStyle(
-          color: Colors.white
-        ),
-        ),
+        title: const Text("Caregiver Profile"),
         backgroundColor: Colors.black12,
         centerTitle: true,
-        elevation: 4,
       ),
-
-
-      // ----------------------------
-      // DRAWER: Side navigation menu
-      // ----------------------------
-      drawer: Drawer(
-
-        child: ListView(
-
-          padding: EdgeInsets.zero, // Removes extra top padding
-          children: [
-            // 🟣 Drawer Header with user info
-            UserAccountsDrawerHeader(
-                decoration: const BoxDecoration(color: Colors.purple),
-                accountName: Text(
-                  profile['name'] ?? 'Unknown User', // Show job seeker name
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                accountEmail: Text(profile['user'] ? ['email'] ?? 'N/A'),
-            currentAccountPicture: CircleAvatar(
-               backgroundImage: (photoUrl != null )
-              ? NetworkImage(photoUrl)
-              : const AssetImage('')
-              as ImageProvider,
-            ),
-            ),
-            // 🟣 Menu Items (you can add more later)
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('My Profile'),
-              onTap: (){
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.details),
-              title: const Text('Summary'),
-              onTap: (){
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.work),
-              title: const Text('Applied Jobs'),
-              onTap: () {
-                // TODO: Navigate to applied jobs page
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                // TODO: Open settings page
-                Navigator.pop(context);
-              },
-            ),
-
-            const Divider(), // Thin line separator
-
-            // 🔴 Logout Option
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Logout', style: TextStyle(color: Colors.red)),
-              onTap: () async {
-                // Clear stored token and user role
-                await _authService.logout();
-
-                // Navigate back to login page
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => LoginPage()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-
-
-
-
-
-      // ----------------------------
-      // BODY: Main content area
-      // ----------------------------
+      drawer: _buildDrawer(context, photoUrl),
 
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🟣 Profile Picture Section
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle, // Ensures circular border
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-                border: Border.all(
-                  color: Colors.purple, // Border color around image
-                  width: 3,
-                ),
-              ),
-              child: CircleAvatar(
-                radius: 60, // Image size
-                backgroundColor: Colors.grey[200],
-                backgroundImage: (photoUrl != null)
-                    ? NetworkImage(photoUrl) // From backend
-                    : const AssetImage('')
-                as ImageProvider, // Local default image
-              ),
-            ),
-
+            _buildProfileHeader(photoUrl),
+            const SizedBox(height: 24),
+            _buildSectionTitle("Personal Info"),
+            _buildInfoRow("Phone", profile['phone']),
+            _buildInfoRow("Gender", profile['gender']),
+            _buildInfoRow("Address", profile['address']),
+            _buildInfoRow("Date of Birth", profile['dateOfBirth']),
+            _buildInfoRow("Blood Group", profile['summery']?[0]?['bloodGroup']),
+            _buildInfoRow("Height", profile['summery']?[0]?['height']),
+            _buildInfoRow("Weight", profile['summery']?[0]?['weight']),
+            _buildInfoRow("Nationality", profile['summery']?[0]?['nationality']),
             const SizedBox(height: 20),
 
-            // 🟣 Display Job Seeker Name
-            Text(
-              profile['name'] ?? 'Unknown',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
+            _buildSectionTitle("Education"),
+            ..._buildEducationSection(),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+            _buildSectionTitle("Skills"),
+            _buildSkillsSection(),
 
-            // 🟣 Display User Email (nested under user object)
-            Text(
-              "Email: ${profile['user']?['email'] ?? 'N/A'}",
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-            ),
+            const SizedBox(height: 20),
+            _buildSectionTitle("Experience"),
+            ..._buildExperienceSection(),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+            _buildSectionTitle("Hobbies"),
+            _buildHobbiesSection(),
 
-            // 🟣 Display Skills
-            Text(
-              "Skills: ${profile['skills'] ?? 'N/A'}",
-              style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
+            const SizedBox(height: 20),
+            _buildSectionTitle("Languages"),
+            _buildLanguagesSection(),
+
+            const SizedBox(height: 20),
+            _buildSectionTitle("References"),
+            ..._buildReferencesSection(),
 
             const SizedBox(height: 30),
-
-            // 🟣 Button for Editing Profile
-            ElevatedButton.icon(
-              onPressed: () {
-                // TODO: Add edit functionality or navigation
-              },
-              icon: const Icon(Icons.edit),
-              label: const Text("Edit Profile"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-                foregroundColor: Colors.white,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
+
+  // ------------------------
+  // PROFILE HEADER
+  // ------------------------
+  Widget _buildProfileHeader(String? photoUrl) {
+    return Center(
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))],
+              border: Border.all(color: Colors.purple, width: 3),
+            ),
+            child: CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.grey[200],
+              backgroundImage: (photoUrl != null)
+                  ? NetworkImage(photoUrl)
+                  : const AssetImage('assets/images/default_avatar.jpg') as ImageProvider,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(profile['name'] ?? 'Unknown', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text("Email: ${profile['user']?['email'] ?? 'N/A'}", style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+        ],
+      ),
+    );
+  }
+
+  // ------------------------
+  // DRAWER
+  // ------------------------
+  Drawer _buildDrawer(BuildContext context, String? photoUrl) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(color: Colors.purple),
+            accountName: Text(profile['name'] ?? 'Unknown User', style: const TextStyle(fontWeight: FontWeight.bold)),
+            accountEmail: Text(profile['user']?['email'] ?? 'N/A'),
+            currentAccountPicture: CircleAvatar(
+              backgroundImage: (photoUrl != null)
+                  ? NetworkImage(photoUrl)
+                  : const AssetImage('assets/images/default_avatar.jpg') as ImageProvider,
+            ),
+          ),
+          _buildDrawerItem(context, Icons.person, "My Profile", () => Navigator.pop(context)),
+          // _buildDrawerItem(context, Icons.abc, "Summary", () async {
+          //   final summary = await summaryService.getJobSeekerSummary();
+          //   if (summary != null) {
+          //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => JobSeekerSummary(summary: summary)));
+          //   }
+          // }),
+          // _buildDrawerItem(context, Icons.work, "Applied Jobs", () {
+          //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MyApplicationsPage()));
+          // }),
+          _buildDrawerItem(context, Icons.book, "Education", () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => EducationListScreen()));
+          }),
+          _buildDrawerItem(context, Icons.settings, "Settings", () => Navigator.pop(context)),
+          const Divider(),
+          _buildDrawerItem(context, Icons.logout, "Logout", () async {
+            await _authService.logout();
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginPage()));
+          }, color: Colors.red),
+        ],
+      ),
+    );
+  }
+
+  ListTile _buildDrawerItem(BuildContext context, IconData icon, String title, VoidCallback onTap, {Color? color}) {
+    return ListTile(
+      leading: Icon(icon, color: color),
+      title: Text(title, style: TextStyle(color: color)),
+      onTap: onTap,
+    );
+  }
+
+  // ------------------------
+  // SECTION TITLES
+  // ------------------------
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _buildInfoRow(String label, dynamic value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Text("$label: ", style: const TextStyle(fontWeight: FontWeight.bold)),
+          Expanded(child: Text(value?.toString() ?? "N/A")),
+        ],
+      ),
+    );
+  }
+
+  // ------------------------
+  // EDUCATION
+  // ------------------------
+  List<Widget> _buildEducationSection() {
+    return List.generate(profile['educations']?.length ?? 0, (i) {
+      final edu = profile['educations'][i];
+      return Card(
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("${edu['level']} - ${edu['institute']}", style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text("${edu['board'] ?? 'N/A'}, ${edu['year']}"),
+              Text("Result: ${edu['result']}"),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildSkillsSection() {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: List.generate(profile['skills']?.length ?? 0, (i) {
+        final skill = profile['skills'][i];
+        return Chip(label: Text("${skill['name']} (${skill['level']})"), backgroundColor: Colors.indigo[50]);
+      }),
+    );
+  }
+
+  List<Widget> _buildExperienceSection() {
+    return List.generate(profile['experiences']?.length ?? 0, (i) {
+      final exp = profile['experiences'][i];
+      return Card(
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        child: ListTile(
+          title: Text("${exp['position']} - ${exp['company']}"),
+          subtitle: Text("${exp['fromDate'] ?? 'N/A'} to ${exp['toDate'] ?? 'N/A'}\n${exp['description'] ?? ''}"),
+        ),
+      );
+    });
+  }
+
+  Widget _buildHobbiesSection() {
+    return Wrap(
+      spacing: 8,
+      children: List.generate(profile['hobbies']?.length ?? 0, (i) {
+        final h = profile['hobbies'][i];
+        return Chip(label: Text(h['name']));
+      }),
+    );
+  }
+
+  Widget _buildLanguagesSection() {
+    return Wrap(
+      spacing: 8,
+      children: List.generate(profile['languages']?.length ?? 0, (i) {
+        final lang = profile['languages'][i];
+        return Chip(label: Text("${lang['name']} (${lang['proficiency']})"));
+      }),
+    );
+  }
+
+  List<Widget> _buildReferencesSection() {
+    return List.generate(profile['references']?.length ?? 0, (i) {
+      final ref = profile['references'][i];
+      return ListTile(
+        title: Text(ref['name']),
+        subtitle: Text("${ref['relation']} - ${ref['contact']}"),
+        leading: Icon(Icons.person, color: Colors.purple),
+      );
+    });
+  }
+
+
 }
 
