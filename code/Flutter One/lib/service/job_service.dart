@@ -25,21 +25,22 @@ class JobService {
   }
 
 
-  // ✅ Create new job (POST /api/jobs/)
-  Future<Job> createJob(Map<String, dynamic> data) async {
+  Future<JobDTO> createJob(JobDTO job) async {
     final headers = await _getAuthHeaders();
+
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: headers,
-      body: jsonEncode(data),
+      body: jsonEncode(job.toJson()),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return Job.fromJson(jsonDecode(response.body));
+      return JobDTO.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to create job: ${response.body}');
     }
   }
+
 
 
 
