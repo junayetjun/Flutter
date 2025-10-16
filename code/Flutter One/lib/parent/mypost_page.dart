@@ -1,42 +1,93 @@
-
-
-
-import 'package:dreamjob/entity/job_dto.dart';
+import 'package:dreamjob/entity/category.dart';
+import 'package:dreamjob/entity/location.dart';
+import 'package:dreamjob/service/category_service.dart';
+import 'package:dreamjob/service/job_service.dart';
+import 'package:dreamjob/service/location_service.dart';
 import 'package:flutter/material.dart';
 
-import '../service/job_service.dart'; // Adjust this path
-
-class MyPostPage extends StatefulWidget {
-  const MyPostPage({Key? key}) : super(key: key);
+class AddJobPage extends StatefulWidget {
+  const AddJobPage({super.key});
 
   @override
-  State<MyPostPage> createState() => _MyPostPageState();
+  State<AddJobPage> createState() => _AddJobPageState();
 }
 
-class _MyPostPageState extends State<MyPostPage> {
-  final JobService _jobService = JobService(); // Inject service manually
-  List<JobDTO> _jobs = [];
-  bool _loading = true;
-  String? _errorMsg;
+class _AddJobPageState extends State<AddJobPage> {
+  final _formKey = GlobalKey<FormState>();
+  final JobService _jobService = JobService();
+  final LocationService _locationService = LocationService();
+  final CategoryService _categoryService = CategoryService();
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _salaryController = TextEditingController();
+  final TextEditingController _jobTypeController = TextEditingController();
+
+  List<Location> _locations = [];
+  List<Category> _categories = [];
+
+  int? _selectedLocationId;
+  int? _selectedCategoryId;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchMyJobs();
+    _loadInitialData();
   }
 
-  Future<void> _fetchMyJobs() async {
+  Future<void> _loadInitialData() async {
     try {
-      final data = await _jobService.getMyJobs();
+      final locations = await _locationService.getAllLocations();
+      final categories = await _categoryService.getAllCategories();
+
       setState(() {
-        _jobs = data;
-        _loading = false;
+        _locations = locations;
+        _categories = categories;
       });
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load data: $e')),
+      );
+    }
+  }
+
+  Future<void> _submitJob() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (_selectedLocationId == null || _selectedCategoryId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select location and category')),
+      );
+      return;
+    }
+
+    final jobData = {
+      "title": _titleController.text.trim(),
+      "description": _descriptionController.text.trim(),
+      "salary": double.tryParse(_salaryController.text) ?? 0.0,
+      "jobType": _jobTypeController.text.trim(),
+      "postedDate": DateTime.now().toIso8601String(),
+      "location": {"id": _selectedLocationId},
+      "category": {"id": _selectedCategoryId},
+    };
+
+    setState(() => _isLoading = true);
+    try {
+      final job = await _jobService.createJob(jobData);
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('✅ Job posted successfully!')),
+      );
+      _formKey.currentState!.reset();
       setState(() {
-        _errorMsg = 'Failed to load jobs.';
-        _loading = false;
+        _selectedLocationId = null;
+        _selectedCategoryId = null;
       });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Failed to post job: $e')),
+      );
     }
   }
 
@@ -44,31 +95,96 @@ class _MyPostPageState extends State<MyPostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Job Posts'),
-        backgroundColor: Colors.indigo,
+        title: const Text('Post a New Job'),
       ),
-      body: _loading
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _errorMsg != null
-          ? Center(child: Text(_errorMsg!, style: const TextStyle(color: Colors.red)))
-          : _jobs.isEmpty
-          ? const Center(child: Text('No jobs found.'))
-          : ListView.builder(
-        itemCount: _jobs.length,
-        itemBuilder: (context, index) {
-          final job = _jobs[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: ListTile(
-              leading: const Icon(Icons.work_outline, color: Colors.indigo),
-              title: Text(job.title),
-              subtitle: Text(job.description),
-              trailing: Text('\$${job.salary.toStringAsFixed(2)}'),
-            ),
-          );
-        },
+          : SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _titleController,
+                decoration: const InputDecoration(labelText: 'Job Title'),
+                validator: (value) =>
+                value!.isEmpty ? 'Enter job title' : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _descriptionController,
+                decoration:
+                const InputDecoration(labelText: 'Description'),
+                maxLines: 3,
+                validator: (value) =>
+                value!.isEmpty ? 'Enter job description' : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _salaryController,
+                decoration: const InputDecoration(labelText: 'Salary'),
+                keyboardType: TextInputType.number,
+                validator: (value) =>
+                value!.isEmpty ? 'Enter salary' : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _jobTypeController,
+                decoration: const InputDecoration(
+                    labelText: 'Job Type (e.g., Full-time)'),
+                validator: (value) =>
+                value!.isEmpty ? 'Enter job type' : null,
+              ),
+              const SizedBox(height: 12),
+
+              // Location dropdown
+              DropdownButtonFormField<int>(
+                value: _selectedLocationId,
+                decoration: const InputDecoration(labelText: 'Location'),
+                items: _locations
+                    .map((loc) => DropdownMenuItem<int>(
+                  value: loc.id,
+                  child: Text(loc.name),
+                ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() => _selectedLocationId = value);
+                },
+                validator: (value) =>
+                value == null ? 'Select location' : null,
+              ),
+              const SizedBox(height: 12),
+
+              // Category dropdown
+              DropdownButtonFormField<int>(
+                value: _selectedCategoryId,
+                decoration: const InputDecoration(labelText: 'Category'),
+                items: _categories
+                    .map((cat) => DropdownMenuItem<int>(
+                  value: cat.id,
+                  child: Text(cat.name),
+                ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() => _selectedCategoryId = value);
+                },
+                validator: (value) =>
+                value == null ? 'Select category' : null,
+              ),
+              const SizedBox(height: 24),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _submitJob,
+                  child: const Text('Post Job'),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

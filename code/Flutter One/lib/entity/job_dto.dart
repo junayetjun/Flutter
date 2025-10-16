@@ -14,7 +14,7 @@ class JobDTO {
   final Category category;
   final Location location;
 
-  // Parent / Employer Info
+  // Parent Info
   final int parentId;
   final String parentName;
   final String contactPerson;

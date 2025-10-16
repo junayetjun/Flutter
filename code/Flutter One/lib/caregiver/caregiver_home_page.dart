@@ -1,10 +1,9 @@
-
-
+import 'package:dreamjob/entity/job_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:dreamjob/service/job_service.dart';
 import 'package:dreamjob/service/category_service.dart';
 import 'package:dreamjob/service/location_service.dart';
-import 'package:dreamjob/entity/job_dto.dart';
+import 'package:dreamjob/entity/job.dart';
 import 'package:dreamjob/entity/category.dart';
 import 'package:dreamjob/entity/location.dart';
 
@@ -26,7 +25,6 @@ class _CaregiverHomeState extends State<CaregiverHome> {
 
   int? selectedCategoryId;
   int? selectedLocationId;
-
   bool isLoading = true;
 
   @override
@@ -36,6 +34,7 @@ class _CaregiverHomeState extends State<CaregiverHome> {
   }
 
   Future<void> _initializeData() async {
+    setState(() => isLoading = true);
     try {
       final fetchedCategories = await _categoryService.fetchCategories();
       final fetchedLocations = await _locationService.getAllLocations();
@@ -48,12 +47,16 @@ class _CaregiverHomeState extends State<CaregiverHome> {
         isLoading = false;
       });
     } catch (e) {
-      print('Error initializing data: $e');
+      debugPrint('Error initializing data: $e');
       setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load data: $e')),
+      );
     }
   }
 
   Future<void> _filterJobs() async {
+    setState(() => isLoading = true);
     try {
       final filteredJobs = await _jobService.searchJobs(
         categoryId: selectedCategoryId,
@@ -62,9 +65,14 @@ class _CaregiverHomeState extends State<CaregiverHome> {
 
       setState(() {
         jobs = filteredJobs;
+        isLoading = false;
       });
     } catch (e) {
-      print('Error filtering jobs: $e');
+      debugPrint('Error filtering jobs: $e');
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to filter jobs: $e')),
+      );
     }
   }
 
@@ -72,9 +80,9 @@ class _CaregiverHomeState extends State<CaregiverHome> {
     return Row(
       children: [
         Expanded(
-          child: DropdownButton<int>(
+          child: DropdownButtonFormField<int>(
             isExpanded: true,
-            hint: const Text("Select Category"),
+            decoration: const InputDecoration(labelText: "Select Category"),
             value: selectedCategoryId,
             items: categories.map((category) {
               return DropdownMenuItem<int>(
@@ -83,18 +91,16 @@ class _CaregiverHomeState extends State<CaregiverHome> {
               );
             }).toList(),
             onChanged: (value) {
-              setState(() {
-                selectedCategoryId = value;
-              });
+              setState(() => selectedCategoryId = value);
               _filterJobs();
             },
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: DropdownButton<int>(
+          child: DropdownButtonFormField<int>(
             isExpanded: true,
-            hint: const Text("Select Location"),
+            decoration: const InputDecoration(labelText: "Select Location"),
             value: selectedLocationId,
             items: locations.map((location) {
               return DropdownMenuItem<int>(
@@ -103,9 +109,7 @@ class _CaregiverHomeState extends State<CaregiverHome> {
               );
             }).toList(),
             onChanged: (value) {
-              setState(() {
-                selectedLocationId = value;
-              });
+              setState(() => selectedLocationId = value);
               _filterJobs();
             },
           ),
@@ -117,20 +121,41 @@ class _CaregiverHomeState extends State<CaregiverHome> {
   Widget _buildJobCard(JobDTO job) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 3,
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: NetworkImage(job.photo),
-          onBackgroundImageError: (_, __) {},
+        title: Text(
+          job.title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        title: Text(job.title),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(job.description),
-            Text("Salary: \$${job.salary}"),
-            Text("Posted on: ${job.postedDate.toLocal().toString().split(' ')[0]}"),
-          ],
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                job.description.length > 80
+                    ? '${job.description.substring(0, 80)}...'
+                    : job.description,
+              ),
+              const SizedBox(height: 4),
+              Text("Salary: \$${job.salary.toStringAsFixed(2)}"),
+              Text(
+                "Location: ${job.location.name}",
+                style: const TextStyle(color: Colors.grey),
+              ),
+              Text(
+                "Posted on: ${job.postedDate.toLocal().toString().split(' ')[0]}",
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ],
+          ),
         ),
+        onTap: () {
+          // TODO: Navigate to job detail page
+        },
       ),
     );
   }

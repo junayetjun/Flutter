@@ -1,8 +1,7 @@
-import 'package:dreamjob/parent/mypost_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dreamjob/service/authservice.dart';
-import 'package:dreamjob/page/add_job_page.dart';
-import 'package:dreamjob/page/loginpage.dart';  // <-- Make sure to import LoginPage
+import 'package:dreamjob/parent/mypost_page.dart';
+import 'package:dreamjob/page/loginpage.dart'; // Make sure LoginPage exists
 
 class ParentProfile extends StatelessWidget {
   final Map<String, dynamic> profile;
@@ -10,7 +9,6 @@ class ParentProfile extends StatelessWidget {
 
   ParentProfile({Key? key, required this.profile}) : super(key: key);
 
-  // Updated logout function - async and await
   void onLogout(BuildContext context) async {
     await _authService.logout();
     Navigator.pushReplacement(
@@ -47,9 +45,7 @@ class ParentProfile extends StatelessWidget {
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.indigo.shade600,
-            ),
+            decoration: BoxDecoration(color: Colors.indigo.shade600),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
               backgroundImage: (profile['photo'] != null && profile['photo'].isNotEmpty)
@@ -76,10 +72,10 @@ class ParentProfile extends StatelessWidget {
             leading: const Icon(Icons.work_outline, color: Colors.indigo),
             title: const Text('Add Job'),
             onTap: () {
-              Navigator.pop(context); // Close drawer
+              Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const AddJobPage()),
+                MaterialPageRoute(builder: (_) => AddJobPage()),
               );
             },
           ),
@@ -88,10 +84,10 @@ class ParentProfile extends StatelessWidget {
             leading: const Icon(Icons.list_alt, color: Colors.indigo),
             title: const Text('My Posted Jobs'),
             onTap: () {
-              Navigator.pop(context); // Close drawer
+              Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const MyPostPage()),
+                MaterialPageRoute(builder: (_) => AddJobPage()),
               );
             },
           ),
@@ -99,7 +95,6 @@ class ParentProfile extends StatelessWidget {
           const Spacer(),
           const Divider(),
 
-          // Logout list tile with updated logout method
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Logout', style: TextStyle(color: Colors.red)),
@@ -131,10 +126,7 @@ class ParentProfile extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               profile['parentName'] ?? 'Parent Name',
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             const Text('Parent', style: TextStyle(color: Colors.grey)),
@@ -159,7 +151,7 @@ class ParentProfile extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const AddJobPage()),
+                  MaterialPageRoute(builder: (_) => AddJobPage()),
                 );
               },
             ),
@@ -175,7 +167,7 @@ class ParentProfile extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const MyPostPage()),
+                  MaterialPageRoute(builder: (_) => AddJobPage()),
                 );
               },
             ),
