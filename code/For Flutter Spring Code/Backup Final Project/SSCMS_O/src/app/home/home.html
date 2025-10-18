@@ -54,7 +54,8 @@
             <span class="badge salary">{{ job.salary | currency }}</span>
           </div>
           <p><strong>Parent:</strong> {{ job.parentName }}</p>
-          <p><strong>Contact:</strong> {{ job.contactPerson }} | {{ job.phone }}</p>
+          <p><strong>Contact Person: </strong> {{ job.contactPerson }} </p>
+          <p><strong>Contact Number: </strong>  {{ job.phone }}</p>
         </div>
         <div class="provider-footer">
           <button class="btn" [routerLink]="['/jobs', job.id]">View Profile</button>

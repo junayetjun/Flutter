@@ -57,7 +57,7 @@ class JobService {
   }
 
   /// ✅ Get logged-in parent's jobs (GET /api/jobs/my-jobs)
-  Future<List<JobDTO>> getMyJobs() async {
+  Future<List<Job>> getMyJobs() async {
     String? token = await AuthService().getToken();
     final headers = await _getAuthHeaders();
     final url = Uri.parse('${baseUrl}my-jobs');
@@ -72,7 +72,7 @@ class JobService {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      return data.map((json) => JobDTO.fromJson(json)).toList();
+      return data.map((json) => Job.fromJson(json)).toList();
     } else {
       throw Exception('Failed to fetch your jobs');
     }

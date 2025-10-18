@@ -146,7 +146,7 @@ class ParentProfile extends StatelessWidget {
               icon: const Icon(Icons.work_outline),
               label: const Text('Add Job'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.indigo,
+                backgroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
               ),
               onPressed: () {
@@ -168,7 +168,7 @@ class ParentProfile extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => AddJobPage()),
+                  MaterialPageRoute(builder: (_) => MyPostPage()),
                 );
               },
             ),

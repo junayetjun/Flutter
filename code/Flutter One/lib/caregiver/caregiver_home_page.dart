@@ -43,14 +43,14 @@ class _CaregiverHomeState extends State<CaregiverHome> {
         categories = fetchedCategories;
         locations = fetchedLocations;
         jobs = fetchedJobs;
-        isLoading = false;
       });
     } catch (e) {
       debugPrint('Error initializing data: $e');
-      setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load data: $e')),
+        SnackBar(content: Text('❌ Failed to load data: $e')),
       );
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
@@ -64,54 +64,50 @@ class _CaregiverHomeState extends State<CaregiverHome> {
 
       setState(() {
         jobs = filteredJobs;
-        isLoading = false;
       });
     } catch (e) {
       debugPrint('Error filtering jobs: $e');
-      setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to filter jobs: $e')),
+        SnackBar(content: Text('❌ Failed to filter jobs: $e')),
       );
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
   Widget _buildDropdowns() {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: DropdownButtonFormField<int>(
-            isExpanded: true,
-            decoration: const InputDecoration(labelText: "Select Category"),
-            value: selectedCategoryId,
-            items: categories.map((category) {
-              return DropdownMenuItem<int>(
-                value: category.id,
-                child: Text(category.name),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() => selectedCategoryId = value);
-              _filterJobs();
-            },
-          ),
+        DropdownButtonFormField<int>(
+          isExpanded: true,
+          decoration: const InputDecoration(labelText: "Select Category"),
+          value: selectedCategoryId,
+          items: categories.map((category) {
+            return DropdownMenuItem<int>(
+              value: category.id,
+              child: Text(category.name),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() => selectedCategoryId = value);
+            _filterJobs();
+          },
         ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: DropdownButtonFormField<int>(
-            isExpanded: true,
-            decoration: const InputDecoration(labelText: "Select Location"),
-            value: selectedLocationId,
-            items: locations.map((location) {
-              return DropdownMenuItem<int>(
-                value: location.id,
-                child: Text(location.name),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() => selectedLocationId = value);
-              _filterJobs();
-            },
-          ),
+        const SizedBox(height: 12),
+        DropdownButtonFormField<int>(
+          isExpanded: true,
+          decoration: const InputDecoration(labelText: "Select Location"),
+          value: selectedLocationId,
+          items: locations.map((location) {
+            return DropdownMenuItem<int>(
+              value: location.id,
+              child: Text(location.name),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() => selectedLocationId = value);
+            _filterJobs();
+          },
         ),
       ],
     );
@@ -120,9 +116,7 @@ class _CaregiverHomeState extends State<CaregiverHome> {
   Widget _buildJobCard(JobDTO job) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 3,
       child: ListTile(
         title: Text(
@@ -140,20 +134,19 @@ class _CaregiverHomeState extends State<CaregiverHome> {
                     : job.description,
               ),
               const SizedBox(height: 4),
-              Text("Salary: \$${job.salary.toStringAsFixed(2)}"),
+              Text("💰 Salary: \$${job.salary.toStringAsFixed(2)}"),
+              Text("📍 Location: ${job.location.name}",
+                  style: const TextStyle(color: Colors.grey)),
               Text(
-                "Location: ${job.location.name}",
-                style: const TextStyle(color: Colors.grey),
-              ),
-              Text(
-                "Posted on: ${job.postedDate.toLocal().toString().split(' ')[0]}",
+                "🗓️ Posted: ${job.postedDate.toLocal().toString().split(' ')[0]}",
                 style: const TextStyle(color: Colors.grey),
               ),
             ],
           ),
         ),
         onTap: () {
-          // TODO: Navigate to job detail page
+          // TODO: Navigate to job details page
+          // Navigator.pushNamed(context, '/jobdetails', arguments: job.id);
         },
       ),
     );
@@ -178,12 +171,13 @@ class _CaregiverHomeState extends State<CaregiverHome> {
               const SizedBox(height: 20),
               Expanded(
                 child: jobs.isEmpty
-                    ? const Center(child: Text("No jobs found"))
+                    ? const Center(
+                  child: Text("🚫 No jobs found"),
+                )
                     : ListView.builder(
                   itemCount: jobs.length,
-                  itemBuilder: (context, index) {
-                    return _buildJobCard(jobs[index]);
-                  },
+                  itemBuilder: (context, index) =>
+                      _buildJobCard(jobs[index]),
                 ),
               ),
             ],
