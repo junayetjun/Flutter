@@ -15,13 +15,13 @@ class JobDTO {
   final Location location;
 
   // Parent Info
-  final int parentId;
-  final String parentName;
-  final String contactPerson;
-  final String email;
-  final String phone;
-  final String childName;
-  final String photo;
+  // final int parentId;
+  // final String parentName;
+  // final String contactPerson;
+  // final String email;
+  // final String phone;
+  // final String childName;
+  // final String photo;
 
   JobDTO({
     required this.id,
@@ -32,13 +32,13 @@ class JobDTO {
     required this.postedDate,
     required this.category,
     required this.location,
-    required this.parentId,
-    required this.parentName,
-    required this.contactPerson,
-    required this.email,
-    required this.phone,
-    required this.childName,
-    required this.photo,
+    // required this.parentId,
+    // required this.parentName,
+    // required this.contactPerson,
+    // required this.email,
+    // required this.phone,
+    // required this.childName,
+    // required this.photo,
   });
 
   factory JobDTO.fromJson(Map<String, dynamic> json) {
@@ -51,13 +51,6 @@ class JobDTO {
       postedDate: DateTime.parse(json['postedDate']),
       category: Category.fromJson(json['category']),
       location: Location.fromJson(json['location']),
-      parentId: json['parentId'],
-      parentName: json['parentName'],
-      contactPerson: json['contactPerson'],
-      email: json['email'],
-      phone: json['phone'],
-      childName: json['childName'],
-      photo: json['photo'],
     );
   }
 
@@ -71,13 +64,13 @@ class JobDTO {
       'postedDate': postedDate.toIso8601String(),
       'category': category.toJson(),
       'location': location.toJson(),
-      'parentId': parentId,
-      'parentName': parentName,
-      'contactPerson': contactPerson,
-      'email': email,
-      'phone': phone,
-      'childName': childName,
-      'photo': photo,
+      // 'parentId': parentId,
+      // 'parentName': parentName,
+      // 'contactPerson': contactPerson,
+      // 'email': email,
+      // 'phone': phone,
+      // 'childName': childName,
+      // 'photo': photo,
     };
   }
 }

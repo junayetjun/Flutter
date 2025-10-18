@@ -1,6 +1,7 @@
+import 'package:dreamjob/page/add_job_page.dart';
+import 'package:dreamjob/parent/mypost_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dreamjob/service/authservice.dart';
-import 'package:dreamjob/parent/mypost_page.dart';
 import 'package:dreamjob/page/loginpage.dart'; // Make sure LoginPage exists
 
 class ParentProfile extends StatelessWidget {
@@ -87,7 +88,7 @@ class ParentProfile extends StatelessWidget {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => AddJobPage()),
+                MaterialPageRoute(builder: (_) => MyPostPage()),
               );
             },
           ),

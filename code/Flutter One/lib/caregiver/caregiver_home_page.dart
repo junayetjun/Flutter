@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:dreamjob/service/job_service.dart';
 import 'package:dreamjob/service/category_service.dart';
 import 'package:dreamjob/service/location_service.dart';
-import 'package:dreamjob/entity/job.dart';
 import 'package:dreamjob/entity/category.dart';
 import 'package:dreamjob/entity/location.dart';
 
