@@ -89,11 +89,16 @@ class JobService {
     );
 
     if (response.statusCode == 200) {
-      return JobDTO.fromJson(jsonDecode(response.body));
+      if (response.body.isNotEmpty) {
+        return JobDTO.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception('❌ Response body is empty');
+      }
     } else {
-      throw Exception('Failed to get job details: ${response.body}');
+      throw Exception('❌ Failed to get job details: ${response.body}');
     }
   }
+
 
   /// ✅ Delete job (DELETE /api/jobs/{id})
   Future<void> deleteJob(int id) async {
@@ -118,14 +123,21 @@ class JobService {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((json) => JobDTO.fromJson(json)).toList();
+      if (response.body.isEmpty) return [];
+
+      final data = jsonDecode(response.body);
+      if (data is List) {
+        return data.map((json) => JobDTO.fromJson(json)).toList();
+      } else {
+        throw Exception("Unexpected response type: ${response.body}");
+      }
     } else if (response.statusCode == 204) {
       return [];
     } else {
       throw Exception('Failed to search jobs: ${response.body}');
     }
   }
+
 
   /// ✅ Update job (PUT /api/jobs/{id})
   Future<JobDTO> updateJob(int id, JobDTO job) async {

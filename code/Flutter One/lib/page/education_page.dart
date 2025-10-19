@@ -1,12 +1,15 @@
-
-
-
+import 'package:dreamjob/caregiver/caregiver_profile.dart';
 import 'package:dreamjob/entity/education.dart';
 import 'package:dreamjob/service/education_service.dart';
 import 'package:flutter/material.dart';
 
 // StatefulWidget to display a list of Education records
 class EducationListScreen extends StatefulWidget {
+  // FIX 1: Add required profile map argument
+  final Map<String, dynamic> profile;
+
+  const EducationListScreen({super.key, required this.profile});
+
   @override
   _EducationListScreenState createState() => _EducationListScreenState();
 }
@@ -26,8 +29,26 @@ class _EducationListScreenState extends State<EducationListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Education'), // Screen title
+        title: const Text('My Education'), // Screen title
         backgroundColor: Colors.indigo, // AppBar color
+
+        // FIX 2: Correct navigation logic to return to CaregiverProfile
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+          onPressed: () {
+            // Since CaregiverProfile navigated here using pushReplacement,
+            // we must use pushReplacement again to go back without stack issues.
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                // Use the profile map passed to this widget
+                builder: (context) => CaregiverProfile(profile: widget.profile),
+              ),
+            );
+          },
+        ),
+        // Ensure the title is centered even with the leading widget
+        centerTitle: true,
       ),
       body: FutureBuilder<List<Education>>(
         // Listen to the future to get data asynchronously
@@ -35,7 +56,7 @@ class _EducationListScreenState extends State<EducationListScreen> {
         builder: (context, snapshot) {
           // While waiting for data, show a loading spinner
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           // If an error occurs while fetching data
           else if (snapshot.hasError) {
@@ -43,7 +64,7 @@ class _EducationListScreenState extends State<EducationListScreen> {
           }
           // If the data is empty
           else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No education records found'));
+            return const Center(child: Text('No education records found'));
           }
           // If data is successfully fetched
           else {
@@ -51,20 +72,20 @@ class _EducationListScreenState extends State<EducationListScreen> {
 
             // Display list of education records
             return ListView.builder(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               itemCount: educations.length,
               itemBuilder: (context, index) {
                 final edu = educations[index];
 
                 // Card widget for each education record
                 return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
                   elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -76,13 +97,13 @@ class _EducationListScreenState extends State<EducationListScreen> {
                               // Level and institute (bold text)
                               Text(
                                 '${edu.level} - ${edu.institute}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.indigo,
                                 ),
                               ),
-                              SizedBox(height: 6), // Spacing
+                              const SizedBox(height: 6), // Spacing
                               // Board and year
                               Text(
                                 '${edu.board}, ${edu.year}',
@@ -91,7 +112,7 @@ class _EducationListScreenState extends State<EducationListScreen> {
                                   color: Colors.grey[700],
                                 ),
                               ),
-                              SizedBox(height: 4), // Small spacing
+                              const SizedBox(height: 4), // Small spacing
                               // Result
                               Text(
                                 'Result: ${edu.result}',
@@ -138,7 +159,7 @@ class _EducationListScreenState extends State<EducationListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit Education'),
+        title: const Text('Edit Education'),
         content: SingleChildScrollView(
           child: Column(
             children: [
@@ -153,7 +174,7 @@ class _EducationListScreenState extends State<EducationListScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -175,16 +196,17 @@ class _EducationListScreenState extends State<EducationListScreen> {
 
                 Navigator.pop(context); // Close dialog
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Education updated successfully')),
+                  const SnackBar(content: Text('Education updated successfully')),
                 );
               } catch (e) {
-                print('Update failed: $e');
+                // Using debugPrint for Flutter-friendly console output
+                debugPrint('Update failed: $e');
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to update education')),
+                  const SnackBar(content: Text('Failed to update education')),
                 );
               }
             },
-            child: Text('Save'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -195,7 +217,7 @@ class _EducationListScreenState extends State<EducationListScreen> {
   // Helper method to build a styled text field
   Widget _buildTextField(String label, TextEditingController controller) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(

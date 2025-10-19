@@ -1,4 +1,5 @@
 import 'package:dreamjob/caregiver/caregiver_profile.dart';
+import 'package:dreamjob/home/home.dart';
 import 'package:dreamjob/page/adminpage.dart';
 import 'package:dreamjob/page/registration.dart';
 import 'package:dreamjob/parent/parent_profile.dart';
@@ -13,7 +14,7 @@ class LoginPage extends StatelessWidget {
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
 
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   final AuthService authService = AuthService();
   final CaregiverService caregiverService = CaregiverService();
   final ParentService parentService = ParentService();
@@ -28,7 +29,12 @@ class LoginPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Back to previous page
+            // FIX: Corrected navigation to return to HomePage using MaterialPageRoute.
+            // Using pushReplacement in case HomePage is intended to be the root on back.
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage())
+            );
           },
         ),
         title: Text(
@@ -210,9 +216,19 @@ class LoginPage extends StatelessWidget {
           );
         }
       }else {
+        // Handle case where user is logged in but role is unknown/unhandled
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login successful, but role "$role" is not handled.')),
+        );
         print('Unknown role: $role');
       }
     } catch (error) {
+      if (context.mounted) {
+        // Show error message to user
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login failed. Please check your credentials.')),
+        );
+      }
       print('Login failed: $error');
     }
   }

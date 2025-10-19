@@ -136,16 +136,19 @@ class _MyPostPageState extends State<MyPostPage> {
                         rows: jobs.map((job) {
                           return DataRow(
                             cells: [
-                              DataCell(Text(job.title)),
+                              DataCell(Text(job.title ?? 'N/A')),
                               DataCell(Text(job.jobType ?? 'N/A')),
-                              DataCell(Text("\$${job.salary}")),
                               DataCell(Text(
-                                job.description.length > 60
-                                    ? "${job.description.substring(0, 60)}..."
-                                    : job.description,
+                                  job.salary != null ? "\$${job.salary}" : 'N/A')),
+                              DataCell(Text(
+                                (job.description != null && job.description!.length > 60)
+                                    ? "${job.description!.substring(0, 60)}..."
+                                    : (job.description ?? 'N/A'),
                               )),
                               DataCell(Text(
-                                '${job.postedDate.toLocal()}'.split(' ')[0],
+                                job.postedDate != null
+                                    ? '${job.postedDate!.toLocal()}'.split(' ')[0]
+                                    : 'N/A',
                               )),
                               DataCell(
                                 Row(
@@ -162,14 +165,14 @@ class _MyPostPageState extends State<MyPostPage> {
                                         const TextStyle(fontSize: 12),
                                       ),
                                       onPressed: () {
-                                        if (job.id != null) {
+                                        if (job.id != null && _token != null) {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (_) =>
                                                   ParentJobApplicationPage(
                                                     jobId: job.id!,
-                                                    token: _token!, // use loaded token here
+                                                    token: _token!,
                                                   ),
                                             ),
                                           );
@@ -178,7 +181,7 @@ class _MyPostPageState extends State<MyPostPage> {
                                               .showSnackBar(
                                             const SnackBar(
                                               content: Text(
-                                                  '❌ This job has no ID.'),
+                                                  '❌ This job has no ID or no token available.'),
                                             ),
                                           );
                                         }

@@ -59,7 +59,6 @@ class CaregiverProfile extends StatelessWidget {
             const SizedBox(height: 20),
             _buildSectionTitle("Languages"),
             _buildLanguagesSection(),
-
             const SizedBox(height: 20),
             _buildSectionTitle("References"),
             ..._buildReferencesSection(),
@@ -135,7 +134,7 @@ class CaregiverProfile extends StatelessWidget {
             Icons.home,
             "Home",
                 () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => CaregiverHome()),
               );
@@ -146,10 +145,10 @@ class CaregiverProfile extends StatelessWidget {
             Icons.book,
             "Education",
                 () {
-              Navigator.pushReplacement(
+              Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => EducationListScreen()));
+                      builder: (_) => EducationListScreen(profile: profile)));
             },
           ),
           _buildDrawerItem(
