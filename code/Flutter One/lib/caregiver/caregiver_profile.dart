@@ -4,9 +4,17 @@ import 'package:dreamjob/page/loginpage.dart';
 import 'package:dreamjob/service/authservice.dart';
 import 'package:flutter/material.dart';
 
+// Class name remains CaregiverProfile
 class CaregiverProfile extends StatelessWidget {
   final Map<String, dynamic> profile;
   final AuthService _authService = AuthService();
+
+  // 🎨 NEW THEME COLORS 🎨
+  static const Color _primaryColor = Color(0xFF00C853); // Energetic Bright Green
+  static const Color _backgroundColor = Color(0xFF1A1A1A); // Deep Dark Grey
+  static const Color _cardColor = Color(0xFF2C2C2C); // Slightly Lighter Dark Card
+  static const Color _textColor = Colors.white; // High contrast text
+  static const Color _secondaryColor = Color(0xFF90CAF9); // Light Blue for accents/icons
 
   CaregiverProfile({Key? key, required this.profile}) : super(key: key);
 
@@ -20,52 +28,100 @@ class CaregiverProfile extends StatelessWidget {
         : null;
 
     return Scaffold(
+      backgroundColor: _backgroundColor, // Apply dark background to scaffold
       appBar: AppBar(
-        title: const Text("Caregiver Profile"),
-        backgroundColor: Colors.blueAccent,
+        title: const Text("Caregiver Profile", style: TextStyle(color: _textColor)),
+        backgroundColor: _backgroundColor, // Dark AppBar
+        elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: _textColor), // White icons
       ),
       drawer: _buildDrawer(context, photoUrl),
 
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildProfileHeader(photoUrl),
-            const SizedBox(height: 24),
-            _buildSectionTitle("Personal Info"),
-            _buildInfoRow("Phone", profile['phone']),
-            _buildInfoRow("Gender", profile['gender']),
-            _buildInfoRow("Address", profile['address']),
-            _buildInfoRow("Date of Birth", profile['dateOfBirth']),
+            const SizedBox(height: 30),
 
+            // Use a brighter color for the divider in a dark theme
+            const Divider(height: 1, color: Colors.white12),
             const SizedBox(height: 20),
-            _buildSectionTitle("Education"),
-            ..._buildEducationSection(),
 
-            const SizedBox(height: 20),
-            _buildSectionTitle("Skills"),
-            _buildSkillsSection(),
+            _buildSection(
+              title: "Personal Info",
+              children: [
+                _buildInfoRow(Icons.phone, "Phone", profile['phone']),
+                _buildInfoRow(Icons.person_outline, "Gender", profile['gender']),
+                _buildInfoRow(Icons.location_on_outlined, "Address", profile['address']),
+                _buildInfoRow(Icons.calendar_today_outlined, "Date of Birth", profile['dateOfBirth']),
+              ],
+            ),
 
-            const SizedBox(height: 20),
-            _buildSectionTitle("Experience"),
-            ..._buildExperienceSection(),
+            _buildSection(
+              title: "Education",
+              children: _buildEducationSection(),
+              action: TextButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => EducationListScreen(profile: profile)));
+                },
+                icon: const Icon(Icons.arrow_forward_ios, size: 16),
+                label: const Text('MANAGE', style: TextStyle(fontWeight: FontWeight.bold)),
+                style: TextButton.styleFrom(foregroundColor: _secondaryColor),
+              ),
+            ),
 
-            const SizedBox(height: 20),
-            _buildSectionTitle("Hobbies"),
-            _buildHobbiesSection(),
+            _buildSection(
+              title: "Skills",
+              children: [_buildChipsSection('skills', includeLevel: true)],
+            ),
 
-            const SizedBox(height: 20),
-            _buildSectionTitle("Languages"),
-            _buildLanguagesSection(),
-            const SizedBox(height: 20),
-            _buildSectionTitle("References"),
-            ..._buildReferencesSection(),
+            _buildSection(
+              title: "Experience",
+              children: _buildExperienceSection(),
+            ),
+
+            _buildSection(
+              title: "Hobbies",
+              children: [_buildChipsSection('hobbies')],
+            ),
+
+            _buildSection(
+              title: "Languages",
+              children: [_buildChipsSection('languages', includeLevel: true)],
+            ),
+
+            _buildSection(
+              title: "References",
+              children: _buildReferencesSection(),
+            ),
 
             const SizedBox(height: 30),
           ],
         ),
+      ),
+    );
+  }
+
+  // ---------------- WIDGET FACTORY METHODS ----------------
+
+  Widget _buildSection({required String title, required List<Widget> children, Widget? action}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15.0, bottom: 10.0), // Increased top padding
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(title, action: action),
+          const SizedBox(height: 12), // Increased spacing
+          ...children,
+          const SizedBox(height: 15),
+          const Divider(height: 1, color: Colors.white12), // Dark theme divider
+        ],
       ),
     );
   }
@@ -80,26 +136,26 @@ class CaregiverProfile extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                    color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))
+                    color: _primaryColor.withOpacity(0.3), // Glowing effect in dark theme
+                    blurRadius: 15,
+                    offset: const Offset(0, 5))
               ],
-              border: Border.all(color: Colors.blueAccent, width: 3),
+              border: Border.all(color: _primaryColor, width: 3), // Solid primary color border
             ),
             child: CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.grey[200],
+              radius: 65,
+              backgroundColor: _cardColor,
               backgroundImage: (photoUrl != null)
                   ? NetworkImage(photoUrl)
-                  : const AssetImage('assets/images/default_avatar.jpg')
-              as ImageProvider,
+                  : const AssetImage('assets/images/default_avatar.jpg') as ImageProvider,
             ),
           ),
-          const SizedBox(height: 12),
-          Text(profile['name'] ?? 'Unknown',
-              style:
-              const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Text(profile['name'] ?? 'Unknown User',
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: _textColor)),
           const SizedBox(height: 4),
-          Text("Email: ${profile['user']?['email'] ?? 'N/A'}",
-              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+          Text(profile['user']?['email'] ?? 'N/A',
+              style: TextStyle(fontSize: 16, color: _primaryColor)), // Use primary color for contact info
         ],
       ),
     );
@@ -108,104 +164,91 @@ class CaregiverProfile extends StatelessWidget {
   // ---------------- DRAWER ----------------
   Drawer _buildDrawer(BuildContext context, String? photoUrl) {
     return Drawer(
+      backgroundColor: _cardColor, // Dark drawer background
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            decoration: const BoxDecoration(color: Colors.blueAccent),
+            decoration: const BoxDecoration(color: _backgroundColor), // Header darker than drawer
             accountName: Text(profile['name'] ?? 'Unknown User',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-            accountEmail: Text(profile['user']?['email'] ?? 'N/A'),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: _textColor)),
+            accountEmail: Text(profile['user']?['email'] ?? 'N/A', style: const TextStyle(color: Colors.white70)),
             currentAccountPicture: CircleAvatar(
+              backgroundColor: _primaryColor,
               backgroundImage: (photoUrl != null)
                   ? NetworkImage(photoUrl)
                   : const AssetImage('assets/images/default_avatar.jpg')
               as ImageProvider,
             ),
           ),
-          _buildDrawerItem(
-            context,
-            Icons.person,
-            "My Profile",
-                () => Navigator.pop(context),
-          ),
-          _buildDrawerItem(
-            context,
-            Icons.home,
-            "Home",
-                () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => CaregiverHome()),
-              );
-            },
-          ),
-          _buildDrawerItem(
-            context,
-            Icons.book,
-            "Education",
-                () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => EducationListScreen(profile: profile)));
-            },
-          ),
-          _buildDrawerItem(
-              context, Icons.settings, "Settings", () => Navigator.pop(context)),
-          const Divider(),
+          _buildDrawerItem(context, Icons.person, "My Profile", () => Navigator.pop(context)),
+          _buildDrawerItem(context, Icons.home, "Home", () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => CaregiverHome()));
+          }),
+          _buildDrawerItem(context, Icons.school, "Education", () {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (_) => EducationListScreen(profile: profile)));
+          }),
+          _buildDrawerItem(context, Icons.settings, "Settings", () => Navigator.pop(context)),
+          const Divider(color: Colors.white12),
           _buildDrawerItem(
             context,
             Icons.logout,
             "Logout",
                 () async {
               await _authService.logout();
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (_) => LoginPage()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginPage()));
             },
-            color: Colors.red,
+            color: Colors.redAccent,
           ),
         ],
       ),
     );
   }
 
-
-
   ListTile _buildDrawerItem(BuildContext context, IconData icon, String title,
       VoidCallback onTap, {Color? color}) {
     return ListTile(
-      leading: Icon(icon, color: color ?? Colors.blueAccent),
-      title: Text(
-        title,
-        style: TextStyle(color: color ?? Colors.black87),
-      ),
+      leading: Icon(icon, color: color ?? _secondaryColor), // Use secondary color for drawer icons
+      title: Text(title, style: TextStyle(color: color ?? _textColor)),
       onTap: onTap,
     );
   }
 
   // ---------------- SECTION TITLE ----------------
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(title,
+  Widget _buildSectionTitle(String title, {Widget? action}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
           style: const TextStyle(
-              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
+              fontSize: 22, // Slightly larger
+              fontWeight: FontWeight.bold,
+              color: _textColor),
+        ),
+        if (action != null) action,
+      ],
     );
   }
 
   // ---------------- INFO ROW ----------------
-  Widget _buildInfoRow(String label, dynamic value) {
+  Widget _buildInfoRow(IconData icon, String label, dynamic value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("$label: ",
-              style:
-              const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Icon(icon, color: _primaryColor, size: 20),
+          const SizedBox(width: 16), // Increased spacing
+          SizedBox(
+            width: 110,
+            child: Text("$label:",
+                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white70)),
+          ),
           Expanded(
               child: Text(value?.toString() ?? "N/A",
-                  style: const TextStyle(fontSize: 16))),
+                  style: const TextStyle(fontSize: 16, color: _textColor))), // Value stands out
         ],
       ),
     );
@@ -216,35 +259,51 @@ class CaregiverProfile extends StatelessWidget {
     return List.generate(profile['educations']?.length ?? 0, (i) {
       final edu = profile['educations'][i];
       return Card(
-        color: Colors.blue[50],
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("${edu['level']} - ${edu['institute']}",
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text("${edu['board'] ?? 'N/A'}, ${edu['year']}"),
-              Text("Result: ${edu['result']}"),
-            ],
+        color: _cardColor, // Dark card background
+        elevation: 2,
+        margin: const EdgeInsets.only(top: 8, bottom: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: ListTile(
+          leading: const Icon(Icons.school, color: _secondaryColor),
+          title: Text(
+            "${edu['level']} - ${edu['institute']}",
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: _textColor),
           ),
+          subtitle: Text(
+            "${edu['board'] ?? 'N/A'}, ${edu['year']}\nResult: ${edu['result']}",
+            style: const TextStyle(color: Colors.white54), // Subtitle slightly muted
+          ),
+          isThreeLine: true,
         ),
       );
     });
   }
 
-  // ---------------- SKILLS ----------------
-  Widget _buildSkillsSection() {
+  // ---------------- CHIPS (SKILLS, HOBBIES, LANGUAGES) ----------------
+  Widget _buildChipsSection(String key, {bool includeLevel = false}) {
+    final List<dynamic>? list = profile[key];
+    if (list == null || list.isEmpty) {
+      return const Text("No items listed.", style: TextStyle(fontStyle: FontStyle.italic, color: Colors.white54));
+    }
+
     return Wrap(
-      spacing: 8,
-      runSpacing: 4,
-      children: List.generate(profile['skills']?.length ?? 0, (i) {
-        final skill = profile['skills'][i];
+      spacing: 10, // Increased spacing
+      runSpacing: 10,
+      children: List.generate(list.length, (i) {
+        final item = list[i];
+        String label = item['name'];
+        if (includeLevel && item['level'] != null) {
+          label += " (${item['level']})";
+        } else if (includeLevel && item['proficiency'] != null) {
+          label += " (${item['proficiency']})";
+        }
+
         return Chip(
-            label: Text("${skill['name']} (${skill['level']})"),
-            backgroundColor: Colors.blue[100]);
+          label: Text(label, style: const TextStyle(color: _cardColor, fontWeight: FontWeight.bold)), // Dark text on bright chip
+          backgroundColor: _primaryColor,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        );
       }),
     );
   }
@@ -254,39 +313,45 @@ class CaregiverProfile extends StatelessWidget {
     return List.generate(profile['experiences']?.length ?? 0, (i) {
       final exp = profile['experiences'][i];
       return Card(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        child: ListTile(
-          leading: Icon(Icons.work, color: Colors.blueAccent),
-          title: Text("${exp['position']} - ${exp['company']}"),
-          subtitle: Text(
-              "${exp['fromDate'] ?? 'N/A'} to ${exp['toDate'] ?? 'N/A'}\n${exp['description'] ?? ''}"),
+        color: _cardColor,
+        elevation: 2,
+        margin: const EdgeInsets.only(top: 8, bottom: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${exp['position']}",
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: _primaryColor), // Highlight position
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "${exp['company']}",
+                style: TextStyle(fontStyle: FontStyle.italic, color: Colors.white70),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.date_range, size: 14, color: _secondaryColor),
+                  const SizedBox(width: 8),
+                  Text(
+                    "${exp['fromDate'] ?? 'N/A'} - ${exp['toDate'] ?? 'N/A'}",
+                    style: TextStyle(fontSize: 14, color: Colors.white54),
+                  ),
+                ],
+              ),
+              if (exp['description'] != null && exp['description'].isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(exp['description'], style: const TextStyle(fontSize: 14, color: _textColor)),
+                ),
+            ],
+          ),
         ),
       );
     });
-  }
-
-  // ---------------- HOBBIES ----------------
-  Widget _buildHobbiesSection() {
-    return Wrap(
-      spacing: 8,
-      children: List.generate(profile['hobbies']?.length ?? 0, (i) {
-        final h = profile['hobbies'][i];
-        return Chip(label: Text(h['name']), backgroundColor: Colors.blue[100]);
-      }),
-    );
-  }
-
-  // ---------------- LANGUAGES ----------------
-  Widget _buildLanguagesSection() {
-    return Wrap(
-      spacing: 8,
-      children: List.generate(profile['languages']?.length ?? 0, (i) {
-        final lang = profile['languages'][i];
-        return Chip(
-            label: Text("${lang['name']} (${lang['proficiency']})"),
-            backgroundColor: Colors.blue[100]);
-      }),
-    );
   }
 
   // ---------------- REFERENCES ----------------
@@ -294,9 +359,13 @@ class CaregiverProfile extends StatelessWidget {
     return List.generate(profile['references']?.length ?? 0, (i) {
       final ref = profile['references'][i];
       return ListTile(
-        title: Text(ref['name']),
-        subtitle: Text("${ref['relation']} - ${ref['contact']}"),
-        leading: Icon(Icons.person, color: Colors.blueAccent),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+        leading: const Icon(Icons.person_pin, color: _secondaryColor),
+        title: Text(ref['name'], style: const TextStyle(fontWeight: FontWeight.w600, color: _textColor)),
+        subtitle: Text(
+          "${ref['relation']} | ${ref['contact']}",
+          style: const TextStyle(color: Colors.white54),
+        ),
       );
     });
   }
