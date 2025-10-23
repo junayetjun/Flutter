@@ -57,7 +57,7 @@ class _ParentJobApplicationPageState extends State<ParentJobApplicationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("👥 Applicants"),
+        title: const Text("👥 Interested"),
         backgroundColor: Colors.pinkAccent,
       ),
       body: Container(

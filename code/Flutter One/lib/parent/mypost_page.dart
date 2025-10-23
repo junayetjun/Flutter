@@ -76,7 +76,7 @@ class _MyPostPageState extends State<MyPostPage> {
     return Scaffold(
       backgroundColor: _backgroundColor,
       appBar: AppBar(
-        title: const Text("My Job Requests", style: TextStyle(color: _cardColor)),
+        title: const Text("Interested Candidates", style: TextStyle(color: _cardColor)),
         backgroundColor: _primaryColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: _cardColor),
