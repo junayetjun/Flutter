@@ -40,6 +40,22 @@ class JobDTO {
   });
 
   factory JobDTO.fromJson(Map<String, dynamic> json) {
+    Location? parsedLocation;
+
+    final loc = json['location'];
+    if (loc != null) {
+      if (loc is Map<String, dynamic>) {
+        parsedLocation = Location(
+          id: loc['id'] ?? 0,
+          name: loc['name'] ?? loc['city'] ?? '', // supports both "name" or "city"
+        );
+      } else if (loc is String) {
+        parsedLocation = Location(id: 0, name: loc);
+      } else if (loc is int) {
+        parsedLocation = Location(id: loc, name: '');
+      }
+    }
+
     return JobDTO(
       id: json['id'],
       title: json['title'],
@@ -47,8 +63,10 @@ class JobDTO {
       salary: json['salary'] != null ? (json['salary'] as num).toDouble() : null,
       jobType: json['jobType'],
       postedDate: json['postedDate'] != null ? DateTime.parse(json['postedDate']) : null,
-      category: json['category'] != null ? Category.fromJson(json['category']) : null,
-      location: json['location'] != null ? Location.fromJson(json['location']) : null,
+      category: json['category'] != null
+          ? Category.fromJson(json['category'])
+          : null,
+      location: parsedLocation,
       parentId: json['parentId'],
       parentName: json['parentName'],
       contactPerson: json['contactPerson'],
@@ -58,6 +76,8 @@ class JobDTO {
       photo: json['photo'],
     );
   }
+
+
 
   Map<String, dynamic> toJson() {
     return {

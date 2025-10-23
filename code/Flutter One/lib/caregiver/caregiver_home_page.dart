@@ -1,4 +1,5 @@
 import 'package:dreamjob/caregiver/caregiver_profile.dart';
+import 'package:dreamjob/caregiver/job_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dreamjob/entity/job_dto.dart';
 import 'package:dreamjob/entity/location.dart';
@@ -392,7 +393,18 @@ class _CaregiverHomeState extends State<CaregiverHome> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (job.id != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => JobDetailsPage(jobId: job.id!),
+                          ),
+                        );
+                      } else {
+                        _showSnackBar("Job ID not available.", Colors.orange);
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
                       foregroundColor: Colors.white,
@@ -402,6 +414,7 @@ class _CaregiverHomeState extends State<CaregiverHome> {
                     ),
                     child: const Text("View Profile"),
                   ),
+
                 ],
               ),
             ],
