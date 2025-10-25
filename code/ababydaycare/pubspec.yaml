@@ -1,0 +1,43 @@
+name: ababydaycare
+description: "Angel Baby Day Care"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  http: ^1.5.0
+  dob_input_field: ^2.0.0
+  date_field: ^6.0.0
+  radio_group_v2: ^3.3.1
+  google_fonts: ^6.3.2
+  dio: ^5.9.0
+  image_picker: ^1.2.0
+  image_picker_web: ^4.0.0
+  jwt_decode: ^0.3.1
+  shared_preferences: ^2.5.3
+  flutter_secure_storage: ^9.2.4
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  http_parser: ^4.0.0
+  mime: ^1.0.0
+  lottie: ^3.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  # ✅ Add your assets here
+  assets:
+    - assets/images/
+
