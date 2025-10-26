@@ -10,17 +10,20 @@ import 'package:ababydaycare/service/location_service.dart';
 import 'package:flutter/material.dart';
 
 // ====================================================================
-// --- SKY BLUE & BABY PINK THEME CONSTANTS ---
-const Color primaryColor = Color(0xFF87CEEB);
-const Color primaryLight = Color(0xFFE0F7FA);
-const Color primaryDark = Color(0xFF0077B6);
-const Color accentColor = Color(0xFFFFB6C1);
-const Color accentLight = Color(0xFFFDE4E6);
-const Color backgroundColor = Color(0xFFFAFAFA);
+// --- LIGHT MINT GREEN & SOFT PEACH THEME CONSTANTS ---
+// Calm, natural, and bright palette
+const Color primaryColor = Color(0xFF9EE6B2); // Soft mint green
+const Color primaryLight = Color(0xFFE8FDF0); // Very light mint background
+const Color primaryDark = Color(0xFF3BA46E); // Medium green for contrast
+const Color accentColor = Color(0xFFFFCBA4); // Soft peach
+const Color accentLight = Color(0xFFFFF3E9); // Very light peach
+const Color backgroundColor = Color(0xFFFFFFFF); // Pure white background
 
 const double kPadding = 16.0;
 const double kBorderRadius = 12.0;
 // ====================================================================
+
+
 
 class CaregiverHome extends StatefulWidget {
   final Map<String, dynamic> profile;
@@ -171,7 +174,7 @@ class _CaregiverHomeState extends State<CaregiverHome> {
 
           const SizedBox(height: 4),
           const Text(
-            "Find Your Trusted Customer",
+            "Available Circular",
             style: TextStyle(
                 color: Colors.black87,
                 fontSize: 26,
